@@ -1,10 +1,12 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
   } from '@nestjs/common';
   import { InjectRepository } from '@nestjs/typeorm';
   import { Repository } from 'typeorm';
-  import { CreateMaintenanceTypeDto } from './dto/create-maintenance-type.dto'
+  import { CreateMaintenanceTypeDto } from './dto/create-maintenance-type.dto';
+  import { UpdateMaintenanceTypeDto } from './dto/update-maintenance-type.dto';
   import { MaintenanceTypeEntity } from './entities/maintenance-type.entity';
   
   @Injectable()
@@ -47,5 +49,26 @@ import {
       return maintenanceType;
     }
   
+    async findActiveOrFail(id: string): Promise<MaintenanceTypeEntity> {
+      const maintenanceType = await this.findOne(id);
+  
+      if (!maintenanceType.isActive) {
+        throw new BadRequestException('Maintenance type is not active');
+      }
+  
+      return maintenanceType;
+    }
+  
+    async update(
+      id: string,
+      dto: UpdateMaintenanceTypeDto,
+    ): Promise<MaintenanceTypeEntity> {
+      const maintenanceType = await this.findOne(id);   
+      this.maintenanceTypesRepository.merge(maintenanceType, dto);
+  
+      return this.maintenanceTypesRepository.save(maintenanceType);
+    }
+  
+   
   }
   
