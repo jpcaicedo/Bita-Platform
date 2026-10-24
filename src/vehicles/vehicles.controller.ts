@@ -40,6 +40,13 @@ import {
       return this.vehiclesService.findAllByOwner(request.user.id);
     }
   
-
+    @Get(':id')
+    findOne(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.vehiclesService.findOwnedOrFail(id, request.user.id);
+    }
+  
   }
   
