@@ -1,6 +1,7 @@
 import {
     ConflictException,
     Injectable,
+    NotFoundException,
   } from '@nestjs/common';
   import { InjectRepository } from '@nestjs/typeorm';
   import { Repository } from 'typeorm';
@@ -38,6 +39,17 @@ import {
       return this.workshopProfilesRepository.save(profile);
     }
   
-    
+    async findByUser(userId: string): Promise<WorkshopProfileEntity> {
+      const profile = await this.workshopProfilesRepository.findOneBy({
+        userId,
+      });
+  
+      if (!profile) {
+        throw new NotFoundException('Workshop profile not found');
+      }
+  
+      return profile;
+    }
+  
   }
   
