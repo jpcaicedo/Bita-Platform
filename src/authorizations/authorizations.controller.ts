@@ -4,7 +4,7 @@ import {
     Get,
     Param,
     ParseUUIDPipe,
-
+    Patch,
     Post,
     Req,
     UseGuards,
@@ -13,7 +13,8 @@ import {
   import { AuthenticatedUser } from '../auth/authenticated-user.interface';
   import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
   import { AuthorizationsService } from './authorizations.service';
-  import { CreateAuthorizationDto } from './dto/create-authorization.dto'
+  import { CreateAuthorizationDto } from './dto/create-authorization.dto';
+  import { RevokeAuthorizationDto } from './dto/revoke-authorization.dto';
   
   const requestValidationPipe = new ValidationPipe({
     transform: true,
@@ -43,5 +44,13 @@ import {
       return this.authorizationsService.findByVehicle(vehicleId, request.user.id);
     }
   
+    @Patch('authorizations/:id/revoke')
+    revoke(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Body(requestValidationPipe) dto: RevokeAuthorizationDto,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.authorizationsService.revoke(id, request.user, dto);
+    }
   }
   
