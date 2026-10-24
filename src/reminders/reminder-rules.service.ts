@@ -65,5 +65,21 @@ import {
       }
     }
   
+    ensureCanBeCompleted(reminder: SmartReminderEntity): void {
+      if (reminder.status !== 'pending' && reminder.status !== 'notified') {
+        throw new ConflictException(
+          'Only pending or notified reminders can be completed',
+        );
+      }
+    }
+  
+    ensureKilometersAreNotLower(kilometers: number, current: number): void {
+      if (kilometers < current) {
+        throw new BadRequestException(
+          'Kilometers cannot be lower than the current kilometers of the vehicle',
+        );
+      }
+    }
+  
   }
   
