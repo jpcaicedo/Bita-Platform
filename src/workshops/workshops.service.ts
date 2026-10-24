@@ -105,5 +105,35 @@ import {
       }));
     }
   
+    async findVehicleByPlate(plate: string, workshopId: string) {
+      await this.ensureIsWorkshop(workshopId);
+  
+      const vehicle = await this.vehiclesService.findByPlate(plate);
+      const authorization = await this.authorizationsService.findActive(
+        vehicle.id,
+        workshopId,
+      );
+  
+      return {
+        vehicle: {
+          id: vehicle.id,
+          plate: vehicle.plate,
+          brand: vehicle.brand,
+          model: vehicle.model,
+          year: vehicle.year,
+          currentKilometers: authorization?.canRead
+            ? vehicle.currentKilometers
+            : null,
+        },
+        authorization: authorization
+          ? {
+              id: authorization.id,
+              canRead: authorization.canRead,
+              canWrite: authorization.canWrite,
+              status: authorization.status,
+            }
+          : null,
+      };
+    }
   }
   
