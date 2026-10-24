@@ -41,6 +41,40 @@ import {
       });
     }
   
-    
+    async findOne(id: string): Promise<VehicleEntity> {
+      const vehicle = await this.vehiclesRepository.findOneBy({ id });
+  
+      if (!vehicle) {
+        throw new NotFoundException(`Vehicle with id ${id} not found`);
+      }
+  
+      return vehicle;
+    }
+  
+    async findByPlate(plate: string): Promise<VehicleEntity> {
+      const normalizedPlate = plate.toUpperCase();
+      const vehicle = await this.vehiclesRepository.findOneBy({
+        plate: normalizedPlate,
+      });
+  
+      if (!vehicle) {
+        throw new NotFoundException(
+          `Vehicle with plate ${normalizedPlate} not found`,
+        );
+      }
+  
+      return vehicle;
+    }
+  
+    async findOwnedOrFail(id: string, userId: string): Promise<VehicleEntity> {
+      const vehicle = await this.findOne(id);
+  
+      if (vehicle.ownerId !== userId) {
+        throw new ForbiddenException('You are not the owner of this vehicle');
+      }
+  
+      return vehicle;
+    }
+  
   }
   
