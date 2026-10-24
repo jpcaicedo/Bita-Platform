@@ -1,4 +1,60 @@
-import { Controller } from '@nestjs/common';
-
-@Controller('vehicles')
-export class VehiclesController {}
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    Req,
+    UseGuards,
+    ValidationPipe,
+  } from '@nestjs/common';
+  import { AuthenticatedUser } from '../auth/authenticated-user.interface';
+  import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+  import { CreateVehicleDto } from './dto/create-vehicle.dto';
+  import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+  import { VehiclesService } from './vehicles.service';
+  
+  const requestValidationPipe = new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  });
+  
+  @Controller('vehicles')
+  @UseGuards(JwtAuthGuard)
+  export class VehiclesController {
+    constructor(private readonly vehiclesService: VehiclesService) {}
+  
+    @Post()
+    create(
+      @Body(requestValidationPipe) dto: CreateVehicleDto,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.vehiclesService.create(request.user.id, dto);
+    }
+  
+    @Get()
+    findAll(@Req() request: { user: AuthenticatedUser }) {
+      return this.vehiclesService.findAllByOwner(request.user.id);
+    }
+  
+    @Get(':id')
+    findOne(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.vehiclesService.findOwnedOrFail(id, request.user.id);
+    }
+  
+    @Patch(':id')
+    update(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Body(requestValidationPipe) dto: UpdateVehicleDto,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.vehiclesService.update(id, request.user.id, dto);
+    }
+  }
+  

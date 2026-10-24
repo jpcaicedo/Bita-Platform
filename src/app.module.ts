@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,8 +15,9 @@ import { WorkshopsModule } from './workshops/workshops.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, //Hace que este modulo sea global y no sea necesario importarlo en cada modulo que se quiera usar
+      isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -27,7 +29,7 @@ import { WorkshopsModule } from './workshops/workshops.module';
         password: configService.get<string>('DB_PASSWORD') ?? 'postgres',
         database: configService.get<string>('DB_DATABASE') ?? 'bita_db',
         autoLoadEntities: true,
-        synchronize: configService.get<string>('DB_SYNC') === 'true', //En produccion se recomienda ponerlo en false para que no se pierdan datos
+        synchronize: configService.get<string>('DB_SYNC') === 'true',
         ssl: configService.get<string>('NODE_ENV') === 'production',
       }),
     }),
