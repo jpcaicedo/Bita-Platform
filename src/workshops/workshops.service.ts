@@ -1,5 +1,6 @@
 import {
     ConflictException,
+    ForbiddenException,
     Injectable,
     NotFoundException,
   } from '@nestjs/common';
@@ -61,6 +62,24 @@ import {
       this.workshopProfilesRepository.merge(profile, dto);
   
       return this.workshopProfilesRepository.save(profile);
+    }
+  
+    async ensureIsWorkshop(userId: string): Promise<void> {
+      const isWorkshop = await this.workshopProfilesRepository.existsBy({
+        userId,
+      });
+  
+      if (!isWorkshop) {
+        throw new ForbiddenException('Only workshops can perform this action');
+      }
+    }
+  
+    async ensureWorkshopExists(userId: string): Promise<void> {
+      const exists = await this.workshopProfilesRepository.existsBy({ userId });
+  
+      if (!exists) {
+        throw new NotFoundException('Workshop not found');
+      }
     }
   
   }
