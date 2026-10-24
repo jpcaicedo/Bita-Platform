@@ -48,5 +48,13 @@ import {
       return this.vehiclesService.findOwnedOrFail(id, request.user.id);
     }
   
+    @Patch(':id')
+    update(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Body(requestValidationPipe) dto: UpdateVehicleDto,
+      @Req() request: { user: AuthenticatedUser },
+    ) {
+      return this.vehiclesService.update(id, request.user.id, dto);
+    }
   }
   
