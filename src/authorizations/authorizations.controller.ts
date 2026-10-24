@@ -13,5 +13,13 @@ import {
       }
     }
   
+    ensureWorkshopIsNotOwner(ownerId: string, workshopId: string): void {
+      if (ownerId === workshopId) {
+        throw new BadRequestException(
+          'The owner cannot authorize himself as a workshop',
+        );
+      }
+    }
+  
   }
   
