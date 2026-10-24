@@ -82,5 +82,28 @@ import {
       }
     }
   
+    async findAuthorizedVehicles(workshopId: string) {
+      await this.ensureIsWorkshop(workshopId);
+  
+      const authorizations =
+        await this.authorizationsService.findActiveByWorkshop(workshopId);
+  
+      return authorizations.map((authorization) => ({
+        authorizationId: authorization.id,
+        canRead: authorization.canRead,
+        canWrite: authorization.canWrite,
+        vehicle: {
+          id: authorization.vehicle.id,
+          plate: authorization.vehicle.plate,
+          brand: authorization.vehicle.brand,
+          model: authorization.vehicle.model,
+          year: authorization.vehicle.year,
+          currentKilometers: authorization.canRead
+            ? authorization.vehicle.currentKilometers
+            : null,
+        },
+      }));
+    }
+  
   }
   
