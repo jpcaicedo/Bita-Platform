@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ConflictException,
     Injectable,
     NotFoundException,
   } from '@nestjs/common';
@@ -17,7 +18,7 @@ import {
     ) {}
   
     async create(dto: CreateMaintenanceTypeDto): Promise<MaintenanceTypeEntity> {
-      
+      await this.ensureNameIsAvailable(dto.name);
   
       const maintenanceType = this.maintenanceTypesRepository.create({
         name: dto.name,
@@ -63,12 +64,23 @@ import {
       id: string,
       dto: UpdateMaintenanceTypeDto,
     ): Promise<MaintenanceTypeEntity> {
-      const maintenanceType = await this.findOne(id);   
+      const maintenanceType = await this.findOne(id);
+  
+      if (dto.name && dto.name !== maintenanceType.name) {
+        await this.ensureNameIsAvailable(dto.name);
+      }
+  
       this.maintenanceTypesRepository.merge(maintenanceType, dto);
   
       return this.maintenanceTypesRepository.save(maintenanceType);
     }
   
-   
+    private async ensureNameIsAvailable(name: string): Promise<void> {
+      const exists = await this.maintenanceTypesRepository.existsBy({ name });
+  
+      if (exists) {
+        throw new ConflictException('Maintenance type name already registered');
+      }
+    }
   }
   
