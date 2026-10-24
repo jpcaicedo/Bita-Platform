@@ -8,6 +8,7 @@ import {
   import { AuthorizationsService } from '../authorizations/authorizations.service';
   import { VehiclesService } from '../vehicles/vehicles.service';
   import { CreateWorkshopProfileDto } from './dto/create-workshop-profile.dto';
+  import { UpdateWorkshopProfileDto } from './dto/update-workshop-profile.dto';
   import { WorkshopProfileEntity } from './entities/workshop-profile.entity';
   
   @Injectable()
@@ -49,6 +50,17 @@ import {
       }
   
       return profile;
+    }
+  
+    async update(
+      userId: string,
+      dto: UpdateWorkshopProfileDto,
+    ): Promise<WorkshopProfileEntity> {
+      const profile = await this.findByUser(userId);
+  
+      this.workshopProfilesRepository.merge(profile, dto);
+  
+      return this.workshopProfilesRepository.save(profile);
     }
   
   }
