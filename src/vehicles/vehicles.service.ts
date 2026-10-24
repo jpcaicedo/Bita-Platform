@@ -20,7 +20,7 @@ import {
   
     async create(ownerId: string, dto: CreateVehicleDto): Promise<VehicleEntity> {
       const plate = dto.plate.toUpperCase();
-      
+      await this.ensurePlateIsAvailable(plate);
   
       const vehicle = this.vehiclesRepository.create({
         ownerId,
@@ -76,5 +76,45 @@ import {
       return vehicle;
     }
   
+    async update(
+      id: string,
+      userId: string,
+      dto: UpdateVehicleDto,
+    ): Promise<VehicleEntity> {
+      const vehicle = await this.findOwnedOrFail(id, userId);
+      const plate = dto.plate?.toUpperCase();
+  
+      if (plate && plate !== vehicle.plate) {
+        await this.ensurePlateIsAvailable(plate);
+      }
+  
+      if (
+        dto.currentKilometers !== undefined &&
+        dto.currentKilometers < vehicle.currentKilometers
+      ) {
+        throw new BadRequestException(
+          'Current kilometers cannot be lower than the registered value',
+        );
+      }
+  
+      this.vehiclesRepository.merge(vehicle, { ...dto, plate });
+  
+      return this.vehiclesRepository.save(vehicle);
+    }
+  
+    async registerKilometers(id: string, kilometers: number): Promise<void> {
+      await this.vehiclesRepository.update(
+        { id, currentKilometers: LessThan(kilometers) },
+        { currentKilometers: kilometers },
+      );
+    }
+  
+    private async ensurePlateIsAvailable(plate: string): Promise<void> {
+      const exists = await this.vehiclesRepository.existsBy({ plate });
+  
+      if (exists) {
+        throw new ConflictException('Plate already registered');
+      }
+    }
   }
   
