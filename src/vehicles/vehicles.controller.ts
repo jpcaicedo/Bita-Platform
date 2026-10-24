@@ -1,4 +1,14 @@
-import { Controller } from '@nestjs/common';
+import {
+    ValidationPipe,
+  } from '@nestjs/common';
 
-@Controller('vehicles')
-export class VehiclesController {}
+  
+  const requestValidationPipe = new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  });
+  
+  
+  
+  
