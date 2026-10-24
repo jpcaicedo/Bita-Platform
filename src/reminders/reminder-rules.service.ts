@@ -102,6 +102,41 @@ import {
       return { dueDate, dueKilometers };
     }
   
-    
+    evaluateTrigger(
+      reminder: SmartReminderEntity,
+      currentKilometers: number,
+    ): ReminderTrigger | null {
+      const today = new Date();
+  
+      if (
+        reminder.dueKilometers !== null &&
+        currentKilometers >= reminder.dueKilometers
+      ) {
+        return 'overdue';
+      }
+  
+      if (reminder.dueDate !== null && today >= new Date(reminder.dueDate)) {
+        return 'overdue';
+      }
+  
+      if (
+        reminder.dueKilometers !== null &&
+        reminder.dueKilometers - currentKilometers <= reminder.leadKilometers
+      ) {
+        return 'upcoming';
+      }
+  
+      if (reminder.dueDate !== null) {
+        const millisecondsLeft =
+          new Date(reminder.dueDate).getTime() - today.getTime();
+        const daysLeft = millisecondsLeft / (1000 * 60 * 60 * 24);
+  
+        if (daysLeft <= reminder.leadDays) {
+          return 'upcoming';
+        }
+      }
+  
+      return null;
+    }
   }
   
