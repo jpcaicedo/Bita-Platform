@@ -21,5 +21,10 @@ import {
       }
     }
   
+    ensureCanBeRevoked(authorization: WorkshopAuthorizationEntity): void {
+      if (authorization.status !== 'active') {
+        throw new ConflictException('Authorization is already revoked');
+      }
+    }
   }
   
