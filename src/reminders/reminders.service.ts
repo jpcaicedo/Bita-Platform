@@ -4,8 +4,9 @@ import {
     Logger,
     NotFoundException,
   } from '@nestjs/common';
+  import { Cron, CronExpression } from '@nestjs/schedule';
   import { InjectRepository } from '@nestjs/typeorm';
-  import { Repository } from 'typeorm';
+  import { In, Repository } from 'typeorm';
   import { AuthenticatedUser } from '../auth/authenticated-user.interface';
   import { MaintenanceTypesService } from '../maintenance-types/maintenance-types.service';
   import { VehiclesService } from '../vehicles/vehicles.service';
@@ -126,6 +127,100 @@ import {
       return this.applyCompletion(reminder, new Date().toISOString().split('T')[0], kilometers);
     }
   
-    
+    async completeFromMaintenance(
+      vehicleId: string,
+      maintenanceTypeId: string,
+      serviceDate: string,
+      kilometers: number,
+    ): Promise<void> {
+      const reminders = await this.remindersRepository.find({
+        where: {
+          vehicleId,
+          maintenanceTypeId,
+          status: In<ReminderStatus>(['pending', 'notified']),
+        },
+      });
+  
+      for (const reminder of reminders) {
+        await this.applyCompletion(reminder, serviceDate, kilometers);
+      }
+    }
+  
+    @Cron(CronExpression.EVERY_DAY_AT_8AM)
+    async handleDailyCheck(): Promise<void> {
+      const created = await this.generateDueNotifications();
+      this.logger.log(`Daily reminder check created ${created} notifications`);
+    }
+  
+    async generateDueNotifications(): Promise<number> {
+      const reminders = await this.remindersRepository.find({
+        where: { status: In<ReminderStatus>(['pending', 'notified']) },
+        relations: { vehicle: true, createdBy: true },
+      });
+  
+      let created = 0;
+  
+      for (const reminder of reminders) {
+        const trigger = this.reminderRulesService.evaluateTrigger(
+          reminder,
+          reminder.vehicle.currentKilometers,
+        );
+  
+        if (!trigger) {
+          continue;
+        }
+  
+        const idempotencyKey = `${reminder.id}:${trigger}:${reminder.dueDate ?? 'none'}:${reminder.dueKilometers ?? 'none'}`;
+        const alreadyExists = await this.notificationsRepository.existsBy({
+          idempotencyKey,
+        });
+  
+        if (alreadyExists) {
+          continue;
+        }
+  
+        const notification = this.notificationsRepository.create({
+          reminderId: reminder.id,
+          channel: reminder.createdBy.waid ? 'whatsapp' : 'email',
+          notificationType: trigger,
+          scheduledFor: new Date(),
+          status: 'pending',
+          idempotencyKey,
+        });
+  
+        await this.notificationsRepository.save(notification);
+        await this.remindersRepository.update(reminder.id, {
+          status: 'notified',
+          lastNotifiedAt: new Date(),
+        });
+  
+        created += 1;
+      }
+  
+      return created;
+    }
+  
+    private applyCompletion(
+      reminder: SmartReminderEntity,
+      baseDate: string,
+      baseKilometers: number,
+    ): Promise<SmartReminderEntity> {
+      if (reminder.recurring) {
+        const nextCycle = this.reminderRulesService.calculateNextCycle(
+          reminder,
+          baseDate,
+          baseKilometers,
+        );
+  
+        reminder.dueDate = nextCycle.dueDate;
+        reminder.dueKilometers = nextCycle.dueKilometers;
+        reminder.status = 'pending';
+        reminder.lastNotifiedAt = null;
+      } else {
+        reminder.status = 'completed';
+      }
+  
+      return this.remindersRepository.save(reminder);
+    }
   }
   
