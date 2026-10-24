@@ -81,5 +81,27 @@ import {
       }
     }
   
+    calculateNextCycle(
+      reminder: SmartReminderEntity,
+      baseDate: string,
+      baseKilometers: number,
+    ): ReminderCycle {
+      let dueDate = reminder.dueDate;
+      let dueKilometers = reminder.dueKilometers;
+  
+      if (reminder.dueDate !== null && reminder.recurrenceDays !== null) {
+        const date = new Date(baseDate);
+        date.setUTCDate(date.getUTCDate() + reminder.recurrenceDays);
+        dueDate = date.toISOString().split('T')[0];
+      }
+  
+      if (reminder.dueKilometers !== null && reminder.recurrenceKm !== null) {
+        dueKilometers = baseKilometers + reminder.recurrenceKm;
+      }
+  
+      return { dueDate, dueKilometers };
+    }
+  
+    
   }
   
