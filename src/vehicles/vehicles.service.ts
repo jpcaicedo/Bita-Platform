@@ -34,6 +34,13 @@ import {
       return this.vehiclesRepository.save(vehicle);
     }
   
+    findAllByOwner(ownerId: string): Promise<VehicleEntity[]> {
+      return this.vehiclesRepository.find({
+        where: { ownerId },
+        order: { createdAt: 'DESC' },
+      });
+    }
+  
     
   }
   
