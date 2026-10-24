@@ -47,6 +47,23 @@ import {
       }
     }
   
-    
+    ensureRecurrenceIsValid(dto: CreateReminderDto): void {
+      if (!dto.recurring) {
+        return;
+      }
+  
+      if (dto.dueDate && !dto.recurrenceDays) {
+        throw new BadRequestException(
+          'recurrenceDays is required for recurring reminders with dueDate',
+        );
+      }
+  
+      if (dto.dueKilometers !== undefined && !dto.recurrenceKm) {
+        throw new BadRequestException(
+          'recurrenceKm is required for recurring reminders with dueKilometers',
+        );
+      }
+    }
+  
   }
   
