@@ -1,4 +1,22 @@
-import { Controller } from '@nestjs/common';
+import {
+    Controller,
+    UseGuards,
+    ValidationPipe,
+  } from '@nestjs/common';
+  import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+  import { AuthorizationsService } from './authorizations.service';
 
-@Controller('authorizations')
-export class AuthorizationsController {}
+  
+  const requestValidationPipe = new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  });
+  
+  @Controller()
+  @UseGuards(JwtAuthGuard)
+  export class AuthorizationsController {
+    constructor(private readonly authorizationsService: AuthorizationsService) {}
+ 
+  }
+  
