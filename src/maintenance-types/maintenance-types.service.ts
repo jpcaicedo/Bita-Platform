@@ -1,10 +1,10 @@
 import {
     Injectable,
+    NotFoundException,
   } from '@nestjs/common';
   import { InjectRepository } from '@nestjs/typeorm';
   import { Repository } from 'typeorm';
-  import { CreateMaintenanceTypeDto } from './dto/create-maintenance-type.dto';
-
+  import { CreateMaintenanceTypeDto } from './dto/create-maintenance-type.dto'
   import { MaintenanceTypeEntity } from './entities/maintenance-type.entity';
   
   @Injectable()
@@ -15,7 +15,7 @@ import {
     ) {}
   
     async create(dto: CreateMaintenanceTypeDto): Promise<MaintenanceTypeEntity> {
-     
+      
   
       const maintenanceType = this.maintenanceTypesRepository.create({
         name: dto.name,
@@ -26,6 +26,25 @@ import {
       });
   
       return this.maintenanceTypesRepository.save(maintenanceType);
+    }
+  
+    findAll(): Promise<MaintenanceTypeEntity[]> {
+      return this.maintenanceTypesRepository.find({
+        where: { isActive: true },
+        order: { name: 'ASC' },
+      });
+    }
+  
+    async findOne(id: string): Promise<MaintenanceTypeEntity> {
+      const maintenanceType = await this.maintenanceTypesRepository.findOneBy({
+        id,
+      });
+  
+      if (!maintenanceType) {
+        throw new NotFoundException(`Maintenance type with id ${id} not found`);
+      }
+  
+      return maintenanceType;
     }
   
   }
