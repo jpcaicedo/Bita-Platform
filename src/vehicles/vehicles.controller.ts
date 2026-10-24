@@ -35,6 +35,11 @@ import {
       return this.vehiclesService.create(request.user.id, dto);
     }
   
-    
+    @Get()
+    findAll(@Req() request: { user: AuthenticatedUser }) {
+      return this.vehiclesService.findAllByOwner(request.user.id);
+    }
+  
+
   }
   
