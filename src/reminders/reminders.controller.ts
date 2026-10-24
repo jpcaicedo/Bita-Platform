@@ -37,4 +37,21 @@ export class RemindersController {
     return this.remindersService.create(vehicleId, request.user, dto);
   }
 
+  @Get('vehicles/:vehicleId/reminders')
+  findByVehicle(
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Req() request: { user: AuthenticatedUser },
+  ) {
+    return this.remindersService.findByVehicle(vehicleId, request.user.id);
+  }
+
+  @Post('reminders/:id/complete')
+  @HttpCode(HttpStatus.OK)
+  complete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(requestValidationPipe) dto: CompleteReminderDto,
+    @Req() request: { user: AuthenticatedUser },
+  ) {
+    return this.remindersService.complete(id, request.user, dto);
+  }
 }
