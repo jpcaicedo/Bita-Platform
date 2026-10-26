@@ -1,276 +1,107 @@
-import {
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { AuthenticatedUser } from '../auth/authenticated-user.interface';
-import { VehicleEntity } from '../vehicles/entities/vehicle.entity';
-import { VehiclesService } from '../vehicles/vehicles.service';
-import { WorkshopProfileEntity } from '../workshops/entities/workshop-profile.entity';
-import { AuthorizationRulesService } from './authorization-rules.service';
-import { AuthorizationsService } from './authorizations.service';
-import { WorkshopAuthorizationEntity } from './entities/workshop-authorization.entity';
+import { MaintenanceTypeEntity } from '../maintenance-types/entities/maintenance-type.entity';
+import { MaintenanceRulesService } from './maintenance-rules.service';
 
-describe('AuthorizationsService', () => {
-  let service: AuthorizationsService;
+describe('MaintenanceRulesService', () => {
+  const service = new MaintenanceRulesService();
 
-  const owner: AuthenticatedUser = {
-    id: 'owner-1',
-    email: 'owner@example.com',
-    waid: null,
-    phone: null,
-  };
+  it('moves the due date by the interval in months', () => {
+    const maintenanceType = {
+      defaultIntervalMonths: 6,
+      defaultIntervalKm: null,
+    } as MaintenanceTypeEntity;
 
-  const authorizationsRepositoryMock = {
-    create: jest.fn(),
-    findOne: jest.fn(),
-    findOneBy: jest.fn(),
-    find: jest.fn(),
-    manager: {
-      transaction: jest.fn(),
-    },
-  };
+    const result = service.calculateNext(maintenanceType, '2026-01-01', 10000);
 
-  const workshopProfilesRepositoryMock = {
-    existsBy: jest.fn(),
-  };
-
-  const vehiclesServiceMock = {
-    findOwnedOrFail: jest.fn(),
-    findOne: jest.fn(),
-  };
-
-  const authorizationRulesServiceMock = {
-    ensureValidPermissions: jest.fn(),
-    ensureWorkshopIsNotOwner: jest.fn(),
-    ensureCanBeRevoked: jest.fn(),
-  };
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
-
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        AuthorizationsService,
-        {
-          provide: getRepositoryToken(WorkshopAuthorizationEntity),
-          useValue: authorizationsRepositoryMock,
-        },
-        {
-          provide: getRepositoryToken(WorkshopProfileEntity),
-          useValue: workshopProfilesRepositoryMock,
-        },
-        {
-          provide: VehiclesService,
-          useValue: vehiclesServiceMock,
-        },
-        {
-          provide: AuthorizationRulesService,
-          useValue: authorizationRulesServiceMock,
-        },
-      ],
-    }).compile();
-
-    service = moduleRef.get(AuthorizationsService);
+    expect(result).toEqual({ dueDate: '2026-07-01', dueKilometers: null });
   });
 
-  it('is defined', () => {
-    expect(service).toBeDefined();
+  it('moves the due kilometers by the interval in kilometers', () => {
+    const maintenanceType = {
+      defaultIntervalMonths: null,
+      defaultIntervalKm: 5000,
+    } as MaintenanceTypeEntity;
+
+    const result = service.calculateNext(maintenanceType, '2026-01-01', 10000);
+
+    expect(result).toEqual({ dueDate: null, dueKilometers: 15000 });
   });
 
-  it('throws NotFoundException when the workshop does not exist', async () => {
-    const vehicle = { id: 'vehicle-1', ownerId: 'owner-1' } as VehicleEntity;
+  it('moves the due date and kilometers when both intervals exist', () => {
+    const maintenanceType = {
+      defaultIntervalMonths: 6,
+      defaultIntervalKm: 5000,
+    } as MaintenanceTypeEntity;
 
-    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue(vehicle);
-    workshopProfilesRepositoryMock.existsBy.mockResolvedValue(false);
+    const result = service.calculateNext(maintenanceType, '2026-01-01', 10000);
 
-    await expect(
-      service.grant('vehicle-1', owner, { workshopId: 'workshop-1' }),
-    ).rejects.toBeInstanceOf(NotFoundException);
-
-    expect(
-      authorizationsRepositoryMock.manager.transaction,
-    ).not.toHaveBeenCalled();
+    expect(result).toEqual({ dueDate: '2026-07-01', dueKilometers: 15000 });
   });
 
-  it('does not grant when the user is not the owner of the vehicle', async () => {
-    vehiclesServiceMock.findOwnedOrFail.mockImplementation(() => {
-      throw new ForbiddenException('You are not the owner of this vehicle');
-    });
+  it('keeps null values when there is no interval', () => {
+    const maintenanceType = {
+      defaultIntervalMonths: null,
+      defaultIntervalKm: null,
+    } as MaintenanceTypeEntity;
 
-    await expect(
-      service.grant('vehicle-1', owner, { workshopId: 'workshop-1' }),
-    ).rejects.toBeInstanceOf(ForbiddenException);
+    const result = service.calculateNext(maintenanceType, '2026-01-01', 10000);
 
-    expect(
-      authorizationsRepositoryMock.manager.transaction,
-    ).not.toHaveBeenCalled();
+    expect(result).toEqual({ dueDate: null, dueKilometers: null });
   });
 
-  it('does not grant when the permissions rule rejects the request', async () => {
-    const vehicle = { id: 'vehicle-1', ownerId: 'owner-1' } as VehicleEntity;
+  it('returns overdue when the kilometers were reached', () => {
+    const next = {
+      dueDate: null,
+      dueKilometers: 10000,
+    };
 
-    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue(vehicle);
-    authorizationRulesServiceMock.ensureValidPermissions.mockImplementation(
-      () => {
-        throw new BadRequestException(
-          'Write permission requires read permission',
-        );
-      },
-    );
+    const result = service.calculateHealthStatus(next, 10000);
 
-    await expect(
-      service.grant('vehicle-1', owner, {
-        workshopId: 'workshop-1',
-        canRead: false,
-        canWrite: true,
-      }),
-    ).rejects.toBeInstanceOf(BadRequestException);
-
-    expect(
-      authorizationsRepositoryMock.manager.transaction,
-    ).not.toHaveBeenCalled();
+    expect(result).toBe('overdue');
   });
 
-  it('throws NotFoundException when the authorization to revoke does not exist', async () => {
-    authorizationsRepositoryMock.findOne.mockResolvedValue(null);
+  it('returns overdue when the due date passed', () => {
+    const next = {
+      dueDate: '2000-01-01',
+      dueKilometers: null,
+    };
 
-    await expect(service.revoke('missing', owner, {})).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
+    const result = service.calculateHealthStatus(next, 1000);
+
+    expect(result).toBe('overdue');
   });
 
-  it('does not revoke when the user is not the owner of the vehicle', async () => {
-    const authorization = {
-      id: 'auth-1',
-      status: 'active',
-      vehicle: { ownerId: 'another-owner' },
-    } as WorkshopAuthorizationEntity;
+  it('returns upcoming when the kilometers are within 500 of the due value', () => {
+    const next = {
+      dueDate: null,
+      dueKilometers: 10300,
+    };
 
-    authorizationsRepositoryMock.findOne.mockResolvedValue(authorization);
+    const result = service.calculateHealthStatus(next, 10000);
 
-    await expect(service.revoke('auth-1', owner, {})).rejects.toBeInstanceOf(
-      ForbiddenException,
-    );
-
-    expect(
-      authorizationsRepositoryMock.manager.transaction,
-    ).not.toHaveBeenCalled();
+    expect(result).toBe('upcoming');
   });
 
-  it('does not revoke when the rule rejects the change', async () => {
-    const authorization = {
-      id: 'auth-1',
-      status: 'revoked',
-      vehicle: { ownerId: 'owner-1' },
-    } as WorkshopAuthorizationEntity;
+  it('returns upcoming when the due date is within 30 days', () => {
+    const due = new Date();
+    due.setUTCDate(due.getUTCDate() + 10);
+    const next = {
+      dueDate: due.toISOString().split('T')[0],
+      dueKilometers: null,
+    };
 
-    authorizationsRepositoryMock.findOne.mockResolvedValue(authorization);
-    authorizationRulesServiceMock.ensureCanBeRevoked.mockImplementation(() => {
-      throw new ConflictException('Authorization is already revoked');
-    });
+    const result = service.calculateHealthStatus(next, 1000);
 
-    await expect(service.revoke('auth-1', owner, {})).rejects.toBeInstanceOf(
-      ConflictException,
-    );
-
-    expect(
-      authorizationsRepositoryMock.manager.transaction,
-    ).not.toHaveBeenCalled();
+    expect(result).toBe('upcoming');
   });
 
-  it('returns the authorizations of a vehicle owned by the user', async () => {
-    const authorizations = [
-      { id: 'auth-1', vehicleId: 'vehicle-1' },
-    ] as WorkshopAuthorizationEntity[];
+  it('returns up_to_date when nothing is close', () => {
+    const next = {
+      dueDate: '2999-01-01',
+      dueKilometers: 50000,
+    };
 
-    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({} as VehicleEntity);
-    authorizationsRepositoryMock.find.mockResolvedValue(authorizations);
+    const result = service.calculateHealthStatus(next, 10000);
 
-    const result = await service.findByVehicle('vehicle-1', 'owner-1');
-
-    expect(result).toEqual(authorizations);
-    expect(authorizationsRepositoryMock.find).toHaveBeenCalledWith({
-      where: { vehicleId: 'vehicle-1' },
-    });
-  });
-
-  it('throws ForbiddenException when the workshop has no active authorization', async () => {
-    authorizationsRepositoryMock.findOneBy.mockResolvedValue(null);
-
-    await expect(
-      service.ensureWorkshopCanWrite('vehicle-1', 'workshop-1'),
-    ).rejects.toBeInstanceOf(ForbiddenException);
-  });
-
-  it('throws ForbiddenException when the authorization is read-only', async () => {
-    authorizationsRepositoryMock.findOneBy.mockResolvedValue({
-      canRead: true,
-      canWrite: false,
-    });
-
-    await expect(
-      service.ensureWorkshopCanWrite('vehicle-1', 'workshop-1'),
-    ).rejects.toBeInstanceOf(ForbiddenException);
-  });
-
-  it('allows the workshop to write when the authorization has write permission', async () => {
-    authorizationsRepositoryMock.findOneBy.mockResolvedValue({
-      canRead: true,
-      canWrite: true,
-    });
-
-    await service.ensureWorkshopCanWrite('vehicle-1', 'workshop-1');
-
-    expect(authorizationsRepositoryMock.findOneBy).toHaveBeenCalledWith({
-      vehicleId: 'vehicle-1',
-      workshopId: 'workshop-1',
-      status: 'active',
-    });
-  });
-
-  it('returns the vehicle without checking authorizations when the user is the owner', async () => {
-    const vehicle = { id: 'vehicle-1', ownerId: 'owner-1' } as VehicleEntity;
-
-    vehiclesServiceMock.findOne.mockResolvedValue(vehicle);
-
-    const result = await service.ensureVehicleReadAccess(
-      'vehicle-1',
-      'owner-1',
-    );
-
-    expect(result).toEqual(vehicle);
-    expect(authorizationsRepositoryMock.findOneBy).not.toHaveBeenCalled();
-  });
-
-  it('returns the vehicle when a workshop has read authorization', async () => {
-    const vehicle = { id: 'vehicle-1', ownerId: 'owner-1' } as VehicleEntity;
-
-    vehiclesServiceMock.findOne.mockResolvedValue(vehicle);
-    authorizationsRepositoryMock.findOneBy.mockResolvedValue({
-      canRead: true,
-      canWrite: false,
-    });
-
-    const result = await service.ensureVehicleReadAccess(
-      'vehicle-1',
-      'workshop-1',
-    );
-
-    expect(result).toEqual(vehicle);
-  });
-
-  it('throws ForbiddenException when the user has no read authorization', async () => {
-    const vehicle = { id: 'vehicle-1', ownerId: 'owner-1' } as VehicleEntity;
-
-    vehiclesServiceMock.findOne.mockResolvedValue(vehicle);
-    authorizationsRepositoryMock.findOneBy.mockResolvedValue(null);
-
-    await expect(
-      service.ensureVehicleReadAccess('vehicle-1', 'stranger-1'),
-    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(result).toBe('up_to_date');
   });
 });
