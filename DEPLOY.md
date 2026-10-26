@@ -15,6 +15,18 @@ Neon    (Postgres serverless)
 
 ---
 
+## 0. Estado actual
+
+| Recurso | Valor |
+|---|---|
+| Servicio Render | `bita-api` — <https://bita-api-gz56.onrender.com> |
+| Health check | <https://bita-api-gz56.onrender.com/api/health> |
+| Proyecto Neon | `holy-term-52243612` (`bita-db`), `aws-us-west-2`, Postgres 17 |
+| Región Render | `oregon` (`us-west-2`) |
+| Deploy | Automático en cada push a `main` |
+
+La base ya tiene las 9 tablas creadas por TypeORM (`DB_SYNC=true`).
+
 ## 1. Crear la base de datos en Neon
 
 1. Entra a <https://console.neon.tech> y crea un proyecto.
@@ -54,8 +66,8 @@ Neon    (Postgres serverless)
 4. Aplica el blueprint y espera el primer build (`npm ci && npm run build`).
 
 > Si prefieres crearlo a mano: **New → Web Service**, runtime Node, build
-> `npm ci && npm run build`, start `npm run start:prod`, health check
-> `/api/health`, y agrega las mismas variables de entorno.
+> `npm ci --include=dev && npm run build`, start `npm run start:prod`, health
+> check `/api/health`, y agrega las mismas variables de entorno.
 
 ## 3. Verificar
 
@@ -86,6 +98,8 @@ se usa en local con `docker compose up -d`.
   cambia a `DB_SYNC=false`.
 - **Plan gratuito de Render**: el servicio se suspende tras ~15 min sin tráfico.
   La primera petición después puede tardar 30–60 s (no es un error).
+- **`sh: 1: nest: not found`**: con `NODE_ENV=production` npm omite las
+  devDependencies. Usa `npm ci --include=dev && npm run build`.
 - **Error `self-signed certificate in certificate chain`**: confirma
   `DB_SSL_REJECT_UNAUTHORIZED=false`.
 - **`JWT_SECRET must contain at least 64 characters`**: la app no arranca hasta

@@ -9,7 +9,9 @@ services:
     region: oregon
     branch: main
     autoDeploy: true
-    buildCommand: npm ci && npm run build
+    # --include=dev es obligatorio: con NODE_ENV=production npm omite
+    # devDependencies y `nest build` no existiría.
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /api/health
     envVars:
