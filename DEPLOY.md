@@ -113,8 +113,8 @@ se usa en local con `docker compose up -d`.
   devDependencies. Usa `npm ci --include=dev && npm run build`.
 - **Error `self-signed certificate in certificate chain`**: confirma
   `DB_SSL_REJECT_UNAUTHORIZED=false`.
+- **Build falla en `argon2`**: en Windows, `argon2` 0.45.x trae un binario que
+  hace *segfault* y npm intenta compilar sin Windows SDK. El proyecto usa
+  `^0.44.0`, que instala con binarios precompilados en Windows y Linux.
 - **`JWT_SECRET must contain at least 64 characters`**: la app no arranca hasta
   que el secreto tenga 64+ caracteres.
-- **Build falla en `argon2`**: Render necesita compilar el módulo nativo; el plan
-  gratuito incluye las herramientas, pero si falla, revisa que `engines.node`
-  coincida con la versión soportada.
