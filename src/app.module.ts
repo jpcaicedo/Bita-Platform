@@ -29,7 +29,7 @@ import { WorkshopsModule } from './workshops/workshops.module';
         password: configService.get<string>('DB_PASSWORD') ?? 'postgres',
         database: configService.get<string>('DB_DATABASE') ?? 'bita_db',
         autoLoadEntities: true,
-        synchronize: configService.get<string>('DB_SYNC') === 'true',
+        synchronize: true,
         ssl: configService.get<string>('NODE_ENV') === 'production',
       }),
     }),
