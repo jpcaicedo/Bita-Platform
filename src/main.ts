@@ -6,6 +6,18 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
+    credentials: true,
+  });
+
+  app.enableShutdownHooks();
+
   await app.listen(Number(process.env.PORT ?? 3000), '0.0.0.0');
 }
 bootstrap();

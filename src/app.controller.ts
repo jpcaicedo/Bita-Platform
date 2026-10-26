@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('health')
+  getHealth() {
+    return {
+      status: 'ok',
+      service: 'bita-api',
+      uptime: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString(),
+    };
+  }
 }
