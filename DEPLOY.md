@@ -27,6 +27,14 @@ Neon    (Postgres serverless)
 
 La base ya tiene las 9 tablas creadas por TypeORM (`DB_SYNC=true`).
 
+> **Auto-deploy pendiente de un clic**: el servicio se creó por API, así que el
+> webhook de GitHub no quedó registrado. En Render entra a `bita-api` →
+> **Settings → Build & Deploy → Repository** y reconecta el repositorio una vez.
+> Mientras tanto, los deploys se lanzan desde el dashboard con **Manual Deploy**
+> o con `POST /v1/services/{id}/deploys`. Alternativa: borrar el servicio y
+> crearlo con **New → Blueprint** (render.yaml) para que el webhook quede atado
+> desde el inicio.
+
 ## 1. Crear la base de datos en Neon
 
 1. Entra a <https://console.neon.tech> y crea un proyecto.
@@ -87,6 +95,9 @@ La base ya tiene las 9 tablas creadas por TypeORM (`DB_SYNC=true`).
 | `JWT_SECRET` | sí | Mínimo 64 caracteres |
 | `CORS_ORIGINS` | no | Lista separada por comas; vacío = cualquier origen |
 | `PORT` | no | Render lo inyecta automáticamente |
+
+Los valores reales de `bita-api` están en Render → Environment. Copia local de
+`DATABASE_URL` y `JWT_SECRET` en `.secrets/` (ignorado por git).
 
 El resto (`DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`) solo
 se usa en local con `docker compose up -d`.
