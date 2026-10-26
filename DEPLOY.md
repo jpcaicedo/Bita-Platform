@@ -79,6 +79,7 @@ La base ya tiene las 9 tablas creadas por TypeORM (`DB_SYNC=true`).
 
 ## 3. Verificar
 
+- `https://<servicio>.onrender.com/` → índice JSON (la API vive bajo `/api`)
 - `https://<servicio>.onrender.com/api` → `BITA API is online`
 - `https://<servicio>.onrender.com/api/health` → `{ "status": "ok", ... }`
 - Prueba de base de datos: `POST /api/auth/register` y luego `POST /api/auth/login`.
