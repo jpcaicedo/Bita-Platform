@@ -1,0 +1,126 @@
+@baseUrl = http://localhost:3000/api
+
+# Pega aquí los valores que devuelven las peticiones anteriores.
+@ownerToken = REEMPLAZA_TOKEN_DUENO
+@workshopToken = REEMPLAZA_TOKEN_TALLER
+@workshopUserId = REEMPLAZA_ID_USUARIO_TALLER
+@vehicleId = REEMPLAZA_ID_VEHICULO
+@maintenanceTypeId = REEMPLAZA_ID_TIPO_MANTENIMIENTO
+
+### Estado del servicio (público)
+GET {{baseUrl}}/health
+
+### Registro de usuario (username opcional)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "dueno@example.com",
+  "password": "Secreto123",
+  "username": "Carlos Mendoza"
+}
+
+### Registro de usuario taller
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "taller@example.com",
+  "password": "Secreto123",
+  "username": "Taller Cali"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "dueno@example.com",
+  "password": "Secreto123"
+}
+
+### Usuario autenticado (incluye username)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{ownerToken}}
+
+### Catálogo de tipos de mantenimiento
+GET {{baseUrl}}/maintenance-types
+Authorization: Bearer {{ownerToken}}
+
+### Crear perfil de taller (convierte al usuario en taller)
+POST {{baseUrl}}/workshops
+Authorization: Bearer {{workshopToken}}
+Content-Type: application/json
+
+{
+  "name": "Taller Cali",
+  "businessName": "Taller Cali S.A.S.",
+  "identification": "900123456-7"
+}
+
+### Perfil del taller autenticado (404 si no es taller)
+GET {{baseUrl}}/workshops/me
+Authorization: Bearer {{workshopToken}}
+
+### Actualizar perfil del taller
+PATCH {{baseUrl}}/workshops/me
+Authorization: Bearer {{workshopToken}}
+Content-Type: application/json
+
+{
+  "businessName": "Taller Cali S.A.S.",
+  "identification": "900123456-7"
+}
+
+### Vehículos autorizados al taller
+GET {{baseUrl}}/workshops/vehicles
+Authorization: Bearer {{workshopToken}}
+
+### Recepción: buscar vehículo por placa
+GET {{baseUrl}}/workshops/vehicles/plate/ABC-123
+Authorization: Bearer {{workshopToken}}
+
+### Crear vehículo (dueño)
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "plate": "ABC-123",
+  "brand": "Mazda",
+  "model": "CX-5",
+  "year": 2021,
+  "currentKilometers": 45000
+}
+
+### Autorizar al taller (workshopId = id del USUARIO del taller)
+POST {{baseUrl}}/vehicles/{{vehicleId}}/authorizations
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "workshopId": "{{workshopUserId}}",
+  "canRead": true,
+  "canWrite": true
+}
+
+### Registrar servicio desde el taller (sin workshopId: sale del token)
+POST {{baseUrl}}/workshops/vehicles/{{vehicleId}}/maintenance
+Authorization: Bearer {{workshopToken}}
+Content-Type: application/json
+
+{
+  "maintenanceTypeId": "{{maintenanceTypeId}}",
+  "serviceDate": "2026-11-16",
+  "kilometers": 45500,
+  "cost": 185000,
+  "observations": "Técnico: Ing. Mateo Restrepo\nDescripción: Mantenimiento preventivo\nRepuestos: Aceite 5W-30 | Filtro de aceite\nGarantía: 6 meses o 10.000 km\nMoneda: COP"
+}
+
+### Historial de mantenimientos del vehículo
+GET {{baseUrl}}/vehicles/{{vehicleId}}/maintenance?limit=100
+Authorization: Bearer {{workshopToken}}
+
+### Estado de mantenimientos (próximos vencimientos)
+GET {{baseUrl}}/vehicles/{{vehicleId}}/maintenance/status
+Authorization: Bearer {{workshopToken}}
