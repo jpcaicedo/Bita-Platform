@@ -40,6 +40,27 @@ describe('MaintenanceTypesService', () => {
     expect(service).toBeDefined();
   });
 
+  it('seeds the base catalog when the types do not exist', async () => {
+    repositoryMock.existsBy.mockResolvedValue(false);
+    repositoryMock.create.mockImplementation(
+      (value: unknown) => value as MaintenanceTypeEntity,
+    );
+    repositoryMock.save.mockResolvedValue({});
+
+    await service.onModuleInit();
+
+    expect(repositoryMock.existsBy).toHaveBeenCalledTimes(6);
+    expect(repositoryMock.save).toHaveBeenCalledTimes(6);
+  });
+
+  it('does not duplicate base types that already exist', async () => {
+    repositoryMock.existsBy.mockResolvedValue(true);
+
+    await service.onModuleInit();
+
+    expect(repositoryMock.save).not.toHaveBeenCalled();
+  });
+
   it('creates a maintenance type with default values', async () => {
     const built = { name: 'Oil change' } as MaintenanceTypeEntity;
     const saved = { id: 'type-1', name: 'Oil change' } as MaintenanceTypeEntity;
@@ -137,7 +158,11 @@ describe('MaintenanceTypesService', () => {
 
   it('updates a maintenance type and saves it', async () => {
     const type = { id: 'type-1', name: 'Brakes' } as MaintenanceTypeEntity;
-    const saved = { id: 'type-1', name: 'Brakes', description: 'New' } as MaintenanceTypeEntity;
+    const saved = {
+      id: 'type-1',
+      name: 'Brakes',
+      description: 'New',
+    } as MaintenanceTypeEntity;
 
     repositoryMock.findOneBy.mockResolvedValue(type);
     repositoryMock.save.mockResolvedValue(saved);
