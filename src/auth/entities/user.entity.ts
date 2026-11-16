@@ -25,6 +25,10 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 254, unique: true })
   email!: string;
 
+  // Opcional: en el registro el front lo usa como nombre visible del usuario.
+  @Column({ type: 'varchar', length: 60, nullable: true })
+  username!: string | null;
+
   @Column({ type: 'text', name: 'password_hash', select: false })
   passwordHash!: string;
 
