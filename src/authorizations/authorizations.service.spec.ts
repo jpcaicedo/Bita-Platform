@@ -187,7 +187,7 @@ describe('AuthorizationsService', () => {
       { id: 'auth-1', vehicleId: 'vehicle-1' },
     ] as WorkshopAuthorizationEntity[];
 
-    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({} as VehicleEntity);
+    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({});
     authorizationsRepositoryMock.find.mockResolvedValue(authorizations);
 
     const result = await service.findByVehicle('vehicle-1', 'owner-1');

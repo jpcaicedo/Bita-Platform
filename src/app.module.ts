@@ -12,10 +12,7 @@ import { RemindersModule } from './reminders/reminders.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { WorkshopsModule } from './workshops/workshops.module';
 
-const toBoolean = (
-  value: string | undefined,
-  fallback: boolean,
-): boolean => {
+const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
   if (value === undefined || value === '') return fallback;
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 };

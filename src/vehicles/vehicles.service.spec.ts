@@ -164,7 +164,7 @@ describe('VehiclesService', () => {
       plate: 'ABC123',
       currentKilometers: 10000,
     } as VehicleEntity;
-    const saved = { ...vehicle, currentKilometers: 12000 } as VehicleEntity;
+    const saved = { ...vehicle, currentKilometers: 12000 };
 
     repositoryMock.findOneBy.mockResolvedValue(vehicle);
     repositoryMock.save.mockResolvedValue(saved);
