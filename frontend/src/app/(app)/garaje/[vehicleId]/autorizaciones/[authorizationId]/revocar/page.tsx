@@ -113,7 +113,7 @@ async function RevokeContent({
         <dl className="g-gest-rows">
           <div className="g-gest-row">
             <dt>Taller</dt>
-            <dd>{workshopLabel(authorization.workshopId)}</dd>
+            <dd>{workshopLabel(authorization)}</dd>
           </div>
           <div className="g-gest-row">
             <dt>Vehículo</dt>

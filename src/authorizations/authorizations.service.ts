@@ -15,6 +15,15 @@ import { RevokeAuthorizationDto } from './dto/revoke-authorization.dto';
 import { AuthorizationLogEntity } from './entities/authorization-log.entity';
 import { WorkshopAuthorizationEntity } from './entities/workshop-authorization.entity';
 
+// Autorización expuesta al dueño del vehículo: la relación `workshop` (un
+// usuario) se reemplaza por su nombre comercial.
+export type WorkshopAuthorizationView = Omit<
+  WorkshopAuthorizationEntity,
+  'workshop'
+> & {
+  workshopName: string | null;
+};
+
 @Injectable()
 export class AuthorizationsService {
   constructor(
@@ -138,10 +147,20 @@ export class AuthorizationsService {
   async findByVehicle(
     vehicleId: string,
     userId: string,
-  ): Promise<WorkshopAuthorizationEntity[]> {
+  ): Promise<WorkshopAuthorizationView[]> {
     await this.vehiclesService.findOwnedOrFail(vehicleId, userId);
 
-    return this.authorizationsRepository.find({ where: { vehicleId } });
+    const authorizations = await this.authorizationsRepository.find({
+      where: { vehicleId },
+      relations: { workshop: { workshopProfile: true } },
+    });
+
+    // `workshop` es un usuario: no lo devolvemos completo, solo el nombre
+    // comercial del taller para que el frontend pueda mostrarlo.
+    return authorizations.map(({ workshop, ...authorization }) => ({
+      ...authorization,
+      workshopName: workshop?.workshopProfile?.name ?? null,
+    }));
   }
 
   findActive(
