@@ -40,10 +40,11 @@ async function SplashGate() {
 function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
   return (
     <main className="g-splash">
-      {/* Sin JS: el navegador avanza solo. La animación dura ~3 s y el
-          desvanecido otros 0.7 s antes de entrar al onboarding. */}
+      {/* Sin JS: el navegador avanza solo. El logo se ve 2 s y el
+          desvanecido dura 1 s. El meta refresh de Chrome solo admite
+          segundos enteros, por eso la pantalla avanza a los 3 s. */}
       {autoAdvance && (
-        <meta httpEquiv="refresh" content="4;url=/bienvenida" />
+        <meta httpEquiv="refresh" content="3;url=/bienvenida" />
       )}
 
       <div className="g-splash-brand">
