@@ -32,21 +32,18 @@ async function SplashGate() {
     redirect(homeFor(session));
   }
 
-  // Usuario recurrente que ya vio el onboarding: directo al login.
-  if (cookieStore.get('bita_onboarded')?.value === '1') {
-    redirect('/login');
-  }
-
+  // Sin sesión siempre se muestra el onboarding; solo después de recorrerlo
+  // (o de pulsar "Omitir") se llega al login.
   return <SplashVisual autoAdvance />;
 }
 
 function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
   return (
     <main className="g-splash">
-      {/* Sin JS: el navegador avanza solo. La animación dura 2 s y el
-          desvanecido otros 0.5 s antes de entrar al onboarding. */}
+      {/* Sin JS: el navegador avanza solo. La animación dura ~3 s y el
+          desvanecido otros 0.7 s antes de entrar al onboarding. */}
       {autoAdvance && (
-        <meta httpEquiv="refresh" content="2.5;url=/bienvenida" />
+        <meta httpEquiv="refresh" content="4;url=/bienvenida" />
       )}
 
       <div className="g-splash-brand">

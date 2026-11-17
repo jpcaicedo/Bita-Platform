@@ -17,8 +17,8 @@
   width: min(72vw, 300px);
   /* Proporción real del logo (viewBox recortado): así el centrado es exacto. */
   aspect-ratio: 282.4 / 91.1;
-  /* Se mantiene ~2 s visible y luego se desvanece antes de navegar. */
-  animation: g-splash-out 0.5s ease 2s forwards;
+  /* Se mantiene ~3 s visible y luego se desvanece antes de navegar. */
+  animation: g-splash-out 0.7s ease 2.9s forwards;
 }
 
 .g-splash-logo img {

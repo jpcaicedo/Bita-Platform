@@ -8,7 +8,6 @@ import { bitaFetch } from './bita-api';
 import { isValidEmail, isValidPassword } from './validation';
 
 const TOKEN_COOKIE = 'bita_token';
-const ONBOARDED_COOKIE = 'bita_onboarded';
 
 // El JWT dura 15 minutos: la cookie usa el mismo maxAge.
 const TOKEN_COOKIE_OPTIONS = {
@@ -171,13 +170,5 @@ export async function logoutAction() {
 
 // "Omitir" y "¡Entendido!" del onboarding.
 export async function completeOnboardingAction() {
-  const cookieStore = await cookies();
-  cookieStore.set(ONBOARDED_COOKIE, '1', {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 365,
-  });
   redirect('/login');
 }
