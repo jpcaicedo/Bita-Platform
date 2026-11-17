@@ -15,26 +15,36 @@ interface Step {
   title: string;
   text: string;
   image: string;
+  width: number;
+  height: number;
   alt: string;
 }
 
+// Los autos son SVG con sus decoraciones: el navegador los escala sin pérdida
+// de calidad a cualquier tamaño de pantalla.
 const STEPS: Step[] = [
   {
     title: 'Registra Cada Servicio',
     text: 'Registra cada mantenimiento de tu vehículo y siempre sabe cuándo toca el próximo.',
-    image: '/images/onb-registra.png',
+    image: '/images/car-registra.svg',
+    width: 361,
+    height: 241,
     alt: 'Ilustración de un vehículo con su bitácora de servicios',
   },
   {
     title: 'Nunca Te Pierdas una Revisión',
     text: 'Recibe alertas automáticas según el kilometraje o el tiempo, para que nada se te escape.',
-    image: '/images/onb-alertas.png',
+    image: '/images/car-alertas.svg',
+    width: 328,
+    height: 196,
     alt: 'Ilustración de alertas y recordatorios del vehículo',
   },
   {
     title: 'Comparte el Acceso a Tu Manera',
     text: 'Autoriza a talleres de confianza a registrar el servicio directamente, y revoca el acceso cuando quieras.',
-    image: '/images/onb-accesos.png',
+    image: '/images/car-accesos.svg',
+    width: 311,
+    height: 207,
     alt: 'Ilustración de un taller autorizado para el vehículo',
   },
 ];
@@ -75,20 +85,22 @@ async function OnboardingContent({
 
       <section className="g-onb-arch">
         <h1 className="g-onb-title">{step.title}</h1>
-        <p className="g-onb-text">{step.text}</p>
       </section>
 
       <div className="g-onb-art">
         <Image
           src={step.image}
           alt={step.alt}
-          fill
-          priority={stepIndex === 0}
-          sizes="430px"
+          width={step.width}
+          height={step.height}
+          priority
+          className="g-onb-art-img"
         />
       </div>
 
       <section className="g-onb-panel">
+        <p className="g-onb-text">{step.text}</p>
+
         <div className="g-onb-dots" aria-hidden="true">
           {STEPS.map((item, index) => (
             <span
@@ -100,19 +112,21 @@ async function OnboardingContent({
           ))}
         </div>
 
-        {isLast ? (
-          <form action={completeOnboardingAction}>
-            <SubmitButton pendingText="Entrando…">¡Entendido!</SubmitButton>
-          </form>
-        ) : (
-          <Link
-            className="g-btn g-btn--primary"
-            href={`/bienvenida?paso=${stepIndex + 2}`}
-          >
-            Continuar
-            <ArrowRightIcon size={18} />
-          </Link>
-        )}
+        <div className="g-onb-actions">
+          {isLast ? (
+            <form action={completeOnboardingAction}>
+              <SubmitButton pendingText="Entrando…">¡Entendido!</SubmitButton>
+            </form>
+          ) : (
+            <Link
+              className="g-btn g-btn--primary"
+              href={`/bienvenida?paso=${stepIndex + 2}`}
+            >
+              Continuar
+              <ArrowRightIcon size={18} />
+            </Link>
+          )}
+        </div>
       </section>
     </main>
   );
@@ -124,11 +138,13 @@ function OnboardingSkeleton() {
       <div className="g-onb-top" />
       <section className="g-onb-arch">
         <div className="g-skeleton g-onb-skeleton-title" />
-        <div className="g-skeleton g-onb-skeleton-text" />
       </section>
       <div className="g-onb-art g-skeleton" />
       <section className="g-onb-panel">
-        <div className="g-skeleton g-onb-skeleton-button" />
+        <div className="g-skeleton g-onb-skeleton-text" />
+        <div className="g-onb-actions">
+          <div className="g-skeleton g-onb-skeleton-button" />
+        </div>
       </section>
     </main>
   );

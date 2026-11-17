@@ -23,6 +23,11 @@ El puerto es **3001** para no chocar con el backend. La variable
 
 > La primera vez, `next dev` puede detenerse para avisar de una actualización
 > de seguridad de Next.js. Vuelve a ejecutar `npm run dev` y continúa.
+>
+> El botón flotante de DevTools de Next en la esquina inferior izquierda es
+> exclusivo de desarrollo. Para ocultarlo también ahí, agrega
+> `NEXT_PRIVATE_DISABLE_DEV_OVERLAY_UX=1` a `.env.local`. En producción no
+> existe.
 
 ## Scripts
 
@@ -137,9 +142,9 @@ src/
   taller declaran `instant = false` porque la sesión bloquea la navegación.
 - **Sin dependencias nuevas.** Los íconos son SVG propios y el CSS es plano con
   prefijo `g-`.
-- **Diseño móvil de 430 px.** Los assets de `public/images/` se recortaron de
-  las referencias de `design-ref/` (`Onboarding.png` y `Register.png`) y de los
-  logos SVG originales.
+- **Diseño móvil de 430 px.** Las ilustraciones de `public/images/` son los SVG
+  originales de `design-ref/` (`Car-1.svg` a `Car-4.svg`), con sus decoraciones
+  y escalables sin pérdida de calidad. Los logos también son SVG.
 
 ## Elementos solo de interfaz
 

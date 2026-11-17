@@ -72,7 +72,7 @@ async function RegisterContent({
 
       <div className="g-auth-hero g-signup-hero">
         <Image
-          src="/images/signup-car.png"
+          src="/images/car-registra.svg"
           alt=""
           fill
           priority

@@ -89,7 +89,7 @@ async function LoginContent({
 
       <div className="g-auth-hero">
         <Image
-          src="/images/login-car.png"
+          src="/images/car-login.svg"
           alt=""
           fill
           priority

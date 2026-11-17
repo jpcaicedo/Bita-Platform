@@ -28,8 +28,8 @@
 }
 
 .g-auth-hero img {
-  left: 22.5%;
-  width: 55%;
+  left: 19%;
+  width: 62%;
   object-fit: contain;
 }
 
@@ -159,6 +159,11 @@
 .g-signup-hero {
   height: 190px;
   margin-top: 62px;
+}
+
+.g-signup-hero img {
+  left: 15%;
+  width: 70%;
 }
 
 .g-signup-panel {
