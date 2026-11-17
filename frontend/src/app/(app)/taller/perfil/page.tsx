@@ -144,6 +144,15 @@ async function ProfileContent({
       </form>
 
       <section className="g-card g-form-card">
+        <h3>ID para autorizaciones</h3>
+        <p className="g-subtitle">
+          Compártelo con el dueño del vehículo: lo necesita para darle acceso a
+          tu taller desde su garaje.
+        </p>
+        <code className="g-workshop-uid">{session.user.id}</code>
+      </section>
+
+      <section className="g-card g-form-card">
         <h3>Cómo funciona el acceso</h3>
         <p className="g-subtitle">
           Los dueños autorizan a tu taller desde su garaje. Solo verás los

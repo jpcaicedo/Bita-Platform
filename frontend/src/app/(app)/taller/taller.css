@@ -314,18 +314,32 @@
 
 .g-search-form .g-input {
   flex: 1;
+  min-width: 0;
   min-height: 46px;
   font-size: 0.85rem;
 }
 
 .g-search-form .g-btn {
   flex: 0 0 auto;
+  width: auto;
   min-height: 46px;
   padding: 0 18px;
   font-size: 0.85rem;
 }
 
 /* ---------- Perfil del taller ---------- */
+
+.g-workshop-uid {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--g-crema);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--g-azul);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
 
 .g-profile-card {
   display: flex;
