@@ -1,6 +1,7 @@
 import type { OwnerVehicle } from '@/types/garaje';
 import type { MaintenanceStatusItem } from '@/types/maintenance';
 import { bitaFetch, type BitaResponse } from './bita-api';
+import { diasHasta, formatMiles } from './garaje-formato';
 
 /**
  * Lecturas del módulo del dueño (frente B). Igual que lib/taller.ts:
@@ -67,24 +68,25 @@ export function progresoServicio(
   return item.status === 'upcoming' ? 85 : 40;
 }
 
-// "En 1.750 km", "Pasado por 300 km" o "Vence el 16 nov 2026".
+// "En 1,750 km", "Pasado por 300 km", "En 12 días" o "Venció hace 5 días".
 export function textoVencimiento(
   item: MaintenanceStatusItem,
   currentKilometers: number,
-  formatFecha: (iso: string) => string,
 ): string {
   const { dueKilometers, dueDate } = item.nextMaintenance;
-  const km = (value: number) => new Intl.NumberFormat('es-CO').format(value);
 
   if (dueKilometers !== null) {
     const faltan = dueKilometers - currentKilometers;
-    return faltan > 0 ? `En ${km(faltan)} km` : `Pasado por ${km(-faltan)} km`;
+    return faltan > 0
+      ? `En ${formatMiles(faltan)} km`
+      : `Pasado por ${formatMiles(-faltan)} km`;
   }
 
   if (dueDate !== null) {
-    return item.status === 'overdue'
-      ? `Venció el ${formatFecha(dueDate)}`
-      : `Vence el ${formatFecha(dueDate)}`;
+    const dias = diasHasta(dueDate);
+    if (dias > 0) return `En ${dias} días`;
+    if (dias === 0) return 'Vence hoy';
+    return `Venció hace ${-dias} días`;
   }
 
   return 'Sin próxima fecha';

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { bitaFetch } from './bita-api';
+import { unirTaller } from './garaje-formato';
 import { requireOwner } from './session';
 
 // Mismas reglas del CreateVehicleDto del backend.
@@ -80,7 +81,12 @@ export async function registerOwnerMaintenanceAction(formData: FormData) {
   const serviceDate = texto(formData, 'serviceDate');
   const kmRaw = texto(formData, 'kilometers');
   const costRaw = texto(formData, 'cost');
-  const observations = texto(formData, 'observations');
+  // El nombre del taller se guarda como primera línea de las observaciones
+  // porque el backend no tiene ese campo (ver lib/garaje-formato.ts).
+  const observations = unirTaller(
+    texto(formData, 'workshopName'),
+    texto(formData, 'observations'),
+  );
 
   if (!vehicleId) redirect('/garaje');
 
