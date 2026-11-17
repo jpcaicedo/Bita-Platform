@@ -184,18 +184,86 @@ describe('AuthorizationsService', () => {
 
   it('returns the authorizations of a vehicle owned by the user', async () => {
     const authorizations = [
-      { id: 'auth-1', vehicleId: 'vehicle-1' },
-    ] as WorkshopAuthorizationEntity[];
+      {
+        id: 'auth-1',
+        vehicleId: 'vehicle-1',
+        workshopId: 'workshop-1',
+        workshop: {
+          id: 'workshop-1',
+          email: 'taller@example.com',
+          passwordHash: 'super-secret-hash',
+          workshopProfile: { name: 'Taller Los Andes' },
+        },
+      },
+    ] as unknown as WorkshopAuthorizationEntity[];
 
     vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({});
     authorizationsRepositoryMock.find.mockResolvedValue(authorizations);
 
     const result = await service.findByVehicle('vehicle-1', 'owner-1');
 
-    expect(result).toEqual(authorizations);
+    expect(result).toEqual([
+      {
+        id: 'auth-1',
+        vehicleId: 'vehicle-1',
+        workshopId: 'workshop-1',
+        workshopName: 'Taller Los Andes',
+      },
+    ]);
     expect(authorizationsRepositoryMock.find).toHaveBeenCalledWith({
       where: { vehicleId: 'vehicle-1' },
+      relations: { workshop: { workshopProfile: true } },
     });
+  });
+
+  it('does not expose the workshop user in the authorizations list', async () => {
+    const authorizations = [
+      {
+        id: 'auth-1',
+        vehicleId: 'vehicle-1',
+        workshopId: 'workshop-1',
+        workshop: {
+          id: 'workshop-1',
+          email: 'taller@example.com',
+          passwordHash: 'super-secret-hash',
+          workshopProfile: { name: 'Taller Los Andes' },
+        },
+      },
+    ] as unknown as WorkshopAuthorizationEntity[];
+
+    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({});
+    authorizationsRepositoryMock.find.mockResolvedValue(authorizations);
+
+    const [authorization] = await service.findByVehicle('vehicle-1', 'owner-1');
+
+    expect(authorization).not.toHaveProperty('workshop');
+    expect(JSON.stringify(authorization)).not.toContain('super-secret-hash');
+    expect(JSON.stringify(authorization)).not.toContain('taller@example.com');
+  });
+
+  it('returns a null workshopName when the workshop has no profile', async () => {
+    const authorizations = [
+      {
+        id: 'auth-1',
+        vehicleId: 'vehicle-1',
+        workshopId: 'workshop-1',
+        workshop: { id: 'workshop-1', workshopProfile: null },
+      },
+    ] as unknown as WorkshopAuthorizationEntity[];
+
+    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({});
+    authorizationsRepositoryMock.find.mockResolvedValue(authorizations);
+
+    const result = await service.findByVehicle('vehicle-1', 'owner-1');
+
+    expect(result).toEqual([
+      {
+        id: 'auth-1',
+        vehicleId: 'vehicle-1',
+        workshopId: 'workshop-1',
+        workshopName: null,
+      },
+    ]);
   });
 
   it('throws ForbiddenException when the workshop has no active authorization', async () => {

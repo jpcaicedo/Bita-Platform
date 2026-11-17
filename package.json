@@ -83,6 +83,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@nestjs/typeorm$": "<rootDir>/../test/mocks/nestjs-typeorm.ts",
+      "^@nestjs/schedule$": "<rootDir>/../test/mocks/nestjs-schedule.ts"
+    }
   }
 }

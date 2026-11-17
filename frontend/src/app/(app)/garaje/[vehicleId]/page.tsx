@@ -1,0 +1,375 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { Suspense } from 'react';
+import { GarageIcon } from '@/components/garaje/garage-icon';
+import {
+  etiquetaEstado,
+  getMyVehicle,
+  masUrgente,
+  progresoServicio,
+} from '@/lib/garaje';
+import {
+  diasDesde,
+  diasHasta,
+  estiloTipo,
+  formatMiles,
+  separarTaller,
+} from '@/lib/garaje-formato';
+import {
+  formatCosto,
+  formatFecha,
+  getMaintenanceTypes,
+  getVehicleHealth,
+  getVehicleHistory,
+} from '@/lib/taller';
+import type { MaintenanceStatusItem } from '@/types/maintenance';
+
+export const metadata: Metadata = {
+  title: 'Ficha del vehículo',
+};
+
+interface DetailParams {
+  tipo?: string;
+  registrado?: string;
+}
+
+export default function VehicleDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ vehicleId: string }>;
+  searchParams: Promise<DetailParams>;
+}) {
+  return (
+    <Suspense fallback={<DetailSkeleton />}>
+      <VehicleDetailContent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function VehicleDetailContent({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ vehicleId: string }>;
+  searchParams: Promise<DetailParams>;
+}) {
+  const { vehicleId } = await params;
+  const { tipo, registrado } = await searchParams;
+
+  // Todo en paralelo para que cargue más rápido.
+  const [vehicle, health, history, types] = await Promise.all([
+    getMyVehicle(vehicleId),
+    getVehicleHealth(vehicleId),
+    getVehicleHistory(vehicleId),
+    getMaintenanceTypes(),
+  ]);
+
+  // 404 = no existe, 403 = es de otro dueño. Ninguno se puede ver.
+  if (!vehicle.ok || !vehicle.data) {
+    const noExiste = vehicle.status === 404 || vehicle.status === 403;
+
+    return (
+      <section className="g-garage-state" style={{ marginTop: 62 }}>
+        <h3>{noExiste ? 'Vehículo no encontrado' : 'No pudimos cargarlo'}</h3>
+        <p>
+          {noExiste
+            ? 'Este vehículo no existe o no está en tu garaje.'
+            : 'El servidor no respondió. Inténtalo de nuevo en unos segundos.'}
+        </p>
+        <Link href="/garaje" className="g-btn g-btn--outline">
+          Volver al garaje
+        </Link>
+      </section>
+    );
+  }
+
+  const auto = vehicle.data;
+  const items = health.ok ? (health.data ?? []) : [];
+  const registros = history.ok ? (history.data ?? []) : [];
+  const urgente = masUrgente(items);
+  const status = urgente?.status ?? null;
+
+  // Filtro del historial por tipo (?tipo=<id del tipo>).
+  const filtrados = tipo
+    ? registros.filter((record) => record.maintenanceTypeId === tipo)
+    : registros;
+
+  // Solo mostramos chips de tipos que tengan registros en este vehículo.
+  const tiposUsados = (types.data ?? []).filter((type) =>
+    registros.some((record) => record.maintenanceTypeId === type.id),
+  );
+
+  const inversion = registros.reduce((sum, r) => sum + (r.cost ?? 0), 0);
+  const ultimo = registros[0]; // el backend los devuelve del más reciente al más antiguo
+
+  return (
+    <>
+      <header className="g-garage-detail-head">
+        <div>
+          <h2>
+            {auto.brand} {auto.model} {auto.year ?? ''}
+          </h2>
+          <p>Mi fiel compañero de ruta</p>
+        </div>
+        <span className="g-garage-plate-tag">{auto.plate}</span>
+      </header>
+
+      {registrado === '1' && (
+        <p
+          className="g-alert g-alert--ok"
+          role="status"
+          style={{ marginBottom: 16 }}
+        >
+          Mantenimiento registrado. El kilometraje y los recordatorios se
+          actualizaron.
+        </p>
+      )}
+
+      <section className="g-garage-hero">
+        <div className="g-garage-photo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/garaje/foto-carro.png" alt="" />
+          <span
+            className={`g-garage-badge g-garage-photo-status g-garage-badge--${
+              status ?? 'none'
+            }`}
+          >
+            {etiquetaEstado(status)}
+          </span>
+          <span className="g-garage-photo-pill">
+            <GarageIcon name="garantia" width={13.75} height={13.1} />
+            {registros.length}{' '}
+            {registros.length === 1
+              ? 'servicio registrado'
+              : 'servicios registrados'}
+          </span>
+        </div>
+
+        <div className="g-garage-stats">
+          <div>
+            <span>Odómetro</span>
+            <strong>{formatMiles(auto.currentKilometers)}</strong>
+            <small>km totales</small>
+          </div>
+          <div>
+            <span>Último serv.</span>
+            <strong>
+              {ultimo ? `${diasDesde(ultimo.serviceDate)} días` : '—'}
+            </strong>
+          </div>
+          <div>
+            <span>Inversión</span>
+            <strong className="g-garage-money">
+              {formatCosto(inversion, null)}
+            </strong>
+          </div>
+        </div>
+
+        {/* La alerta lleva a los recordatorios del vehículo (frente C). */}
+        <Link
+          href={`/garaje/${auto.id}/recordatorios`}
+          className={`g-garage-alert g-garage-alert--${urgente?.status ?? 'up_to_date'}`}
+        >
+          <span className="g-garage-alert-icon">
+            <GarageIcon name="campana" width={16.7} height={16.7} />
+          </span>
+          <div className="g-garage-alert-body">
+            <div className="g-garage-alert-title">
+              Alerta Preventiva
+              <span>
+                {urgente ? etiquetaEstado(urgente.status) : 'Recordatorios'}
+              </span>
+            </div>
+            <p className="g-garage-alert-text">
+              {urgente ? (
+                <TextoAlerta item={urgente} km={auto.currentKilometers} />
+              ) : (
+                <>
+                  Sin alertas por ahora. <b>Crea un recordatorio</b>.
+                </>
+              )}
+            </p>
+            {urgente && (
+              <div className={`g-garage-bar g-garage-bar--${urgente.status}`}>
+                <span
+                  style={{
+                    width: `${progresoServicio(urgente, auto.currentKilometers)}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </Link>
+      </section>
+
+      <Link
+        href={`/garaje/${auto.id}/mantenimiento/nuevo`}
+        className="g-garage-cta"
+      >
+        Registrar nuevo mantenimiento
+        <span>
+          <GarageIcon name="flecha" width={10.7} height={10.7} />
+        </span>
+      </Link>
+
+      <h3 className="g-garage-history-title">
+        <GarageIcon name="historial" width={15} height={15} />
+        Historial de Servicios
+      </h3>
+
+      <nav className="g-garage-filters" aria-label="Filtrar historial">
+        <Link
+          href={`/garaje/${auto.id}`}
+          className="g-garage-filter"
+          aria-current={!tipo ? 'page' : undefined}
+        >
+          Todos ({registros.length})
+        </Link>
+        {tiposUsados.map((type) => (
+          <Link
+            key={type.id}
+            href={`/garaje/${auto.id}?tipo=${type.id}`}
+            className="g-garage-filter"
+            aria-current={tipo === type.id ? 'page' : undefined}
+          >
+            {type.name}
+          </Link>
+        ))}
+      </nav>
+
+      {!history.ok ? (
+        <p className="g-alert g-alert--error" role="alert">
+          No pudimos cargar el historial de este vehículo.
+        </p>
+      ) : filtrados.length === 0 ? (
+        <section className="g-garage-state">
+          <p>
+            {tipo
+              ? 'No hay registros de este tipo.'
+              : 'Este vehículo todavía no tiene mantenimientos registrados.'}
+          </p>
+        </section>
+      ) : (
+        <div className="g-garage-records">
+          {filtrados.map((record) => {
+            const estilo = estiloTipo(record.maintenanceType.name);
+            const costo = formatCosto(record.cost, record.observations);
+            const { taller } = separarTaller(record.observations);
+
+            return (
+              <article key={record.id} className="g-garage-record">
+                <div className="g-garage-record-head">
+                  <div className="g-garage-record-main">
+                    <span
+                      className="g-garage-record-icon"
+                      style={{ background: estilo.fondo, color: estilo.color }}
+                    >
+                      <GarageIcon name={estilo.icono} width={18} height={17} />
+                    </span>
+                    <div>
+                      <h3>{record.maintenanceType.name}</h3>
+                      <p className="g-garage-record-meta">
+                        <GarageIcon
+                          name="fecha-mini"
+                          width={10.5}
+                          height={11.7}
+                        />
+                        {formatFecha(record.serviceDate)} ·{' '}
+                        {formatMiles(record.kilometers)} km
+                      </p>
+                    </div>
+                  </div>
+                  {costo && (
+                    <span className="g-garage-record-cost">{costo}</span>
+                  )}
+                </div>
+
+                <div className="g-garage-record-foot">
+                  <span className="g-garage-record-shop">
+                    <GarageIcon name="taller-mini" width={12} height={10.7} />
+                    {taller ??
+                      (record.workshopId
+                        ? 'Registrado por un taller'
+                        : 'Registrado por ti')}
+                  </span>
+                  <span className="g-garage-record-status">Completado</span>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
+// "Próximo cambio de aceite en 1,750 km o 45 días."
+function TextoAlerta({
+  item,
+  km,
+}: {
+  item: MaintenanceStatusItem;
+  km: number;
+}) {
+  const { dueKilometers, dueDate } = item.nextMaintenance;
+  const nombre = item.maintenanceType.name.toLowerCase();
+  const kmRestantes = dueKilometers !== null ? dueKilometers - km : null;
+  const dias = dueDate !== null ? diasHasta(dueDate) : null;
+
+  if (item.status === 'overdue') {
+    return (
+      <>
+        {item.maintenanceType.name} vencido
+        {kmRestantes !== null && kmRestantes <= 0 && (
+          <>
+            {' '}
+            hace <b>{formatMiles(-kmRestantes)} km</b>
+          </>
+        )}
+        {dias !== null && dias < 0 && (
+          <>
+            {' '}
+            (<b>{-dias} días</b>)
+          </>
+        )}
+        .
+      </>
+    );
+  }
+
+  return (
+    <>
+      Próximo {nombre}
+      {kmRestantes !== null && (
+        <>
+          {' '}
+          en <b>{formatMiles(Math.max(0, kmRestantes))} km</b>
+        </>
+      )}
+      {dias !== null && (
+        <>
+          {kmRestantes !== null ? ' o ' : ' en '}
+          <b>{Math.max(0, dias)} días</b>
+        </>
+      )}
+      .
+    </>
+  );
+}
+
+function DetailSkeleton() {
+  return (
+    <div aria-busy="true" style={{ paddingTop: 62 }}>
+      <div
+        className="g-skeleton"
+        style={{ height: 30, width: '60%', marginBottom: 24 }}
+      />
+      <div
+        className="g-skeleton g-garage-skeleton"
+        style={{ height: 424, marginBottom: 16 }}
+      />
+      <div className="g-skeleton g-garage-skeleton" style={{ height: 125 }} />
+    </div>
+  );
+}
