@@ -74,7 +74,7 @@ async function OnboardingContent({
   const isLast = stepIndex === STEPS.length - 1;
 
   return (
-    <main className="g-onb">
+    <main className={`g-onb g-onb--${stepIndex + 1}`}>
       <div className="g-onb-top">
         <form action={completeOnboardingAction}>
           <button type="submit" className="g-onb-skip">
