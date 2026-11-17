@@ -1,37 +1,67 @@
 .g-onb {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding: 18px 20px 0;
+  padding: 48px 20px 0;
   overflow-x: hidden;
+  overflow-x: clip;
   background: var(--g-crema);
 }
 
+/* Elipse clara detrás del título (Figma "Ellipse 59": 418 × 367 en un
+   marco de 393, desde x = -12 e y = -156). Es más ancha que la pantalla
+   para que cubra todo el ancho y su borde de arriba queda fuera. */
+.g-onb::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: -156px;
+  left: -12px;
+  width: calc(100% + 25px);
+  height: 367px;
+  border-radius: 50%;
+  background: #faf0d8;
+  pointer-events: none;
+}
+
+.g-onb--2::before {
+  top: -144px;
+  left: -13px;
+}
+
+.g-onb--3::before {
+  top: -137px;
+  left: -14px;
+}
+
 .g-onb-top {
+  position: relative;
+  z-index: 3;
   display: flex;
   justify-content: flex-end;
-  min-height: 30px;
-  z-index: 3;
+  min-height: 29px;
 }
 
 .g-onb-skip {
-  padding: 8px 18px;
+  margin-right: -5px;
+  padding: 5.5px 17.7px;
+  line-height: 18px;
   border: 0;
   border-radius: var(--g-radio-pill);
   background: var(--g-azul);
   color: var(--g-blanco);
   font-family: var(--g-font-display);
-  font-size: 0.72rem;
+  font-size: 15px;
   font-weight: 700;
 }
 
 .g-onb-arch {
   position: relative;
   z-index: 1;
-  margin: -10px -12px 0;
-  padding: 14px 26px 20px;
-  border-radius: 0 0 50% 50% / 0 0 20% 20%;
-  background: #faf0d8;
+  margin-top: 23px;
+  padding-bottom: 20px;
   text-align: center;
 }
 
