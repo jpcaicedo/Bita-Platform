@@ -15,7 +15,7 @@ export const NAV_LINKS: Record<NavRole, NavLink[]> = {
     { href: '/garaje', label: 'Autos', icon: 'cars' },
     { href: '/garaje', label: 'Historial', icon: 'history' },
     { href: '/garaje/nuevo', label: 'Nuevo', icon: 'plus', primary: true },
-    { href: '/garaje', label: 'Talleres', icon: 'workshops' },
+    { href: '/talleres', label: 'Talleres', icon: 'workshops' },
     { href: '/ajustes', label: 'Ajustes', icon: 'settings' },
   ],
   workshop: [

@@ -35,8 +35,16 @@
   color: var(--g-garage-texto);
 }
 
-/* En el Figma estas pantallas no tienen la barra superior de la app. */
-.g-app-shell:has(.g-garage) .g-app-header {
+/* En el Figma las 4 pantallas del garaje no tienen la barra superior.
+   Solo se oculta en ellas: recordatorios y autorizaciones (frente C)
+   sí la usan aunque vivan dentro de /garaje. */
+.g-app-shell:has(
+    .g-garage-greeting,
+    .g-garage-title,
+    .g-garage-detail-head,
+    .g-garage-intro
+  )
+  .g-app-header {
   display: none;
 }
 
@@ -796,6 +804,7 @@
 
 .g-garage-alert {
   display: flex;
+  color: inherit;
   align-items: flex-start;
   gap: 8px;
   padding: 16px;
