@@ -1,0 +1,39 @@
+.g-splash {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 32px;
+  background: var(--g-crema);
+}
+
+.g-splash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.g-splash-kicker {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.g-splash-logo {
+  position: relative;
+  width: min(74vw, 290px);
+  height: 108px;
+}
+
+.g-splash-logo img {
+  object-fit: contain;
+}
+
+.g-splash-by {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+}

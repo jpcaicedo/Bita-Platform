@@ -1,8 +1,66 @@
-// Placeholder temporal de la Fase 2: la Fase 3 implementa el splash real.
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import { getSession, homeFor } from '@/lib/session';
+import './splash.css';
+
+export const metadata: Metadata = {
+  title: 'Bienvenido',
+};
+
+// El splash solo decide a dónde ir. La imagen se muestra como fallback
+// mientras se lee la cookie, que es un dato de request (por eso Suspense).
 export default function SplashPage() {
   return (
-    <main className="g-screen" style={{ display: 'grid', placeItems: 'center' }}>
-      <h1 className="g-title">BITA</h1>
+    <Suspense fallback={<SplashVisual />}>
+      <SplashGate />
+    </Suspense>
+  );
+}
+
+async function SplashGate() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('bita_token')?.value;
+
+  if (token) {
+    const session = await getSession();
+
+    if (!session) redirect('/login?error=conexion');
+
+    redirect(homeFor(session));
+  }
+
+  // Usuario recurrente que ya vio el onboarding: directo al login.
+  if (cookieStore.get('bita_onboarded')?.value === '1') {
+    redirect('/login');
+  }
+
+  return <SplashVisual autoAdvance />;
+}
+
+function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
+  return (
+    <main className="g-splash">
+      {/* Sin JS: el navegador avanza solo a los 2 segundos. */}
+      {autoAdvance && (
+        <meta httpEquiv="refresh" content="2;url=/bienvenida" />
+      )}
+
+      <div className="g-splash-brand">
+        <p className="g-splash-kicker">Bienvenido a</p>
+        <div className="g-splash-logo">
+          <Image
+            src="/images/logo-bita.svg"
+            alt="BITA"
+            fill
+            priority
+            sizes="300px"
+          />
+        </div>
+        <p className="g-splash-by">by ICESI</p>
+      </div>
     </main>
   );
 }

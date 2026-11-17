@@ -16,6 +16,9 @@ export interface BitaFetchOptions extends RequestInit {
   // Las llamadas de login/registro no deben redirigir por un 401: ese 401
   // significa "credenciales inválidas" y la acción decide qué mostrar.
   redirectOn401?: boolean;
+  // Token explícito para acciones que acaban de iniciar sesión y todavía
+  // necesitan consultar el rol antes de que la cookie viaje en otro request.
+  token?: string;
 }
 
 /**
@@ -28,8 +31,9 @@ export async function bitaFetch<T>(
   path: string,
   options: BitaFetchOptions = {},
 ): Promise<BitaResponse<T>> {
-  const { redirectOn401 = true, ...init } = options;
-  const token = (await cookies()).get('bita_token')?.value;
+  const { redirectOn401 = true, token: explicitToken, ...init } = options;
+  const token =
+    explicitToken ?? (await cookies()).get('bita_token')?.value;
   const headers = new Headers(init.headers);
 
   if (token) {

@@ -1,0 +1,156 @@
+.g-app-shell {
+  position: relative;
+  min-height: 100dvh;
+  padding-bottom: 108px;
+}
+
+.g-app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 10px;
+}
+
+.g-app-car,
+.g-app-back,
+.g-app-user {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+}
+
+.g-app-car,
+.g-app-user {
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: 0 6px 14px rgba(206, 127, 52, 0.25);
+}
+
+.g-app-back {
+  background: transparent;
+  color: var(--g-azul);
+  padding: 0;
+}
+
+.g-app-heading {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--g-font-display);
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--g-azul);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.g-app-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.g-app-bell {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--g-azul);
+  opacity: 0.8;
+}
+
+.g-app-bell:disabled {
+  cursor: default;
+}
+
+.g-app-main {
+  padding: 6px 20px 20px;
+}
+
+/* Barra inferior flotante */
+.g-bottom-nav {
+  position: fixed;
+  z-index: 50;
+  right: 50%;
+  bottom: 14px;
+  transform: translateX(50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  width: calc(100% - 28px);
+  max-width: 402px;
+  padding: 9px 6px 10px;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-blanco);
+  box-shadow: 0 12px 30px rgba(58, 47, 30, 0.16);
+}
+
+.g-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 2px;
+  color: #938d7f;
+  font-family: var(--g-font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+.g-nav-item--active {
+  color: var(--g-azul);
+}
+
+.g-nav-icon {
+  display: grid;
+  place-items: center;
+  height: 24px;
+}
+
+.g-nav-label {
+  white-space: nowrap;
+}
+
+.g-nav-item--primary {
+  color: var(--g-azul);
+}
+
+.g-nav-plus {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-top: -25px;
+  border: 4px solid var(--g-crema);
+  border-radius: 50%;
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: var(--g-sombra-boton);
+}
+
+.g-nav-item--primary .g-nav-label {
+  margin-top: 1px;
+}
+
+/* Pantalla de carga del layout de la app */
+.g-app-loading {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px;
+}
+
+.g-app-loading-card {
+  width: min(100%, 360px);
+  height: 180px;
+}

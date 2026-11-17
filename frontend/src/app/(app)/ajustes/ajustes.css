@@ -1,0 +1,56 @@
+.g-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 8px;
+}
+
+.g-settings-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px 22px;
+  text-align: center;
+}
+
+.g-settings-avatar {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: var(--g-sombra-boton);
+}
+
+.g-settings-name {
+  font-size: 1.35rem;
+}
+
+.g-settings-email {
+  font-size: 0.85rem;
+  color: var(--g-texto-suave);
+  word-break: break-all;
+}
+
+.g-settings-workshop {
+  margin-top: 4px;
+  font-family: var(--g-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--g-azul);
+}
+
+.g-settings-logout .g-btn {
+  width: 100%;
+}
+
+.g-settings-note {
+  padding: 0 12px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--g-texto-suave);
+}
