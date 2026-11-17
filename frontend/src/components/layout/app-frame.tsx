@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_LINKS, type NavRole } from '@/lib/nav-links';
 import { BackIcon, BellIcon, CarIcon, UserIcon } from '@/components/ui/icons';
+import { jakarta } from '@/lib/fonts';
 import { NavIcon } from './nav-icon';
 import './app-frame.css';
 
@@ -66,7 +67,7 @@ export function AppFrame({ role, children }: AppFrameProps) {
   const activeIndex = links.findIndex((link) => isActive(pathname, link.href));
 
   return (
-    <div className="g-app-shell">
+    <div className={`g-app-shell ${jakarta.variable}`}>
       <header className="g-app-header">
         {meta.back ? (
           <Link

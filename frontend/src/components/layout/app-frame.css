@@ -74,7 +74,7 @@
   padding: 6px 20px 20px;
 }
 
-/* Barra inferior flotante */
+/* Barra inferior flotante — igual al Figma (componente "Nav") */
 .g-bottom-nav {
   position: fixed;
   z-index: 50;
@@ -82,64 +82,86 @@
   bottom: 14px;
   transform: translateX(50%);
   display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  width: calc(100% - 28px);
-  max-width: 402px;
-  padding: 9px 6px 10px;
-  border-radius: var(--g-radio-pill);
-  background: var(--g-blanco);
-  box-shadow: 0 12px 30px rgba(58, 47, 30, 0.16);
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 40px);
+  max-width: 350px;
+  height: 64px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 24px rgba(28, 27, 31, 0.08);
 }
 
 .g-nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-  padding: 4px 2px;
-  color: #938d7f;
-  font-family: var(--g-font-display);
-  font-size: 0.6rem;
-  font-weight: 600;
-}
-
-.g-nav-item--active {
-  color: var(--g-azul);
+  justify-content: center;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 3px 2px;
+  color: #544338;
+  font-family: var(--font-jakarta), var(--g-font-body);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.44px;
 }
 
 .g-nav-icon {
   display: grid;
   place-items: center;
-  height: 24px;
+  height: 19px;
+}
+
+/* Íconos del Figma pintados con máscara (toman el color del texto). */
+.g-nav-svg {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask: var(--g-nav-svg) center / contain no-repeat;
+  mask: var(--g-nav-svg) center / contain no-repeat;
 }
 
 .g-nav-label {
+  padding-top: 2px;
   white-space: nowrap;
 }
 
+/* Botón central "+" elevado */
 .g-nav-item--primary {
-  color: var(--g-azul);
+  position: relative;
+  width: 48px;
+  min-width: 48px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
 }
 
 .g-nav-plus {
+  position: absolute;
+  top: -18px;
+  left: 2px;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-top: -25px;
-  border: 4px solid var(--g-crema);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--g-naranja);
-  color: var(--g-blanco);
-  box-shadow: var(--g-sombra-boton);
+  background: #914800;
+  color: #fff;
+  box-shadow: 0 8px 20px -4px rgba(145, 72, 0, 0.45);
 }
 
+/* El Figma no tiene texto bajo el "+": se deja solo para lectores de pantalla */
 .g-nav-item--primary .g-nav-label {
-  margin-top: 1px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 /* Pantalla de carga del layout de la app */
