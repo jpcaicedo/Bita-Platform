@@ -47,44 +47,47 @@
   position: relative;
   z-index: 2;
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  height: clamp(196px, 26vh, 250px);
+  min-height: 184px;
   margin-top: -6px;
+  padding: 6px 0 14px;
 }
 
 .g-onb-art-img {
   width: auto;
   height: auto;
-  max-width: 80%;
-  max-height: 100%;
+  max-width: 82%;
+  max-height: clamp(170px, 26vh, 250px);
   object-fit: contain;
 }
 
 .g-onb-panel {
   z-index: 3;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   margin: 4px -20px 0;
-  padding: 22px 24px 40px;
+  padding: 26px 24px 34px;
   border-radius: 34px 34px 0 0;
   background: var(--g-beige);
 }
 
 .g-onb-text {
-  max-width: 300px;
+  max-width: 340px;
   margin: 0 auto;
-  font-size: 0.82rem;
-  line-height: 1.55;
+  padding: 0 2px;
+  font-size: clamp(1.05rem, 4.7vw, 1.28rem);
+  line-height: 1.45;
   text-align: center;
+  text-wrap: balance;
   color: var(--g-texto-suave);
 }
 
 .g-onb-actions {
   width: 100%;
-  margin-top: auto;
+  margin-top: 8px;
 }
 
 .g-onb-actions form {

@@ -43,13 +43,13 @@ async function SplashGate() {
 function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
   return (
     <main className="g-splash">
-      {/* Sin JS: el navegador avanza solo a los 2 segundos. */}
+      {/* Sin JS: el navegador avanza solo. La animación dura 2 s y el
+          desvanecido otros 0.5 s antes de entrar al onboarding. */}
       {autoAdvance && (
-        <meta httpEquiv="refresh" content="2;url=/bienvenida" />
+        <meta httpEquiv="refresh" content="2.5;url=/bienvenida" />
       )}
 
       <div className="g-splash-brand">
-        <p className="g-splash-kicker">Bienvenido a</p>
         <div className="g-splash-logo">
           <Image
             src="/images/logo-bita.svg"
@@ -59,7 +59,6 @@ function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
             sizes="300px"
           />
         </div>
-        <p className="g-splash-by">by ICESI</p>
       </div>
     </main>
   );

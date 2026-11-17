@@ -7,33 +7,46 @@
 }
 
 .g-splash-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.g-splash-kicker {
-  color: var(--g-azul);
-  font-family: var(--g-font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  display: grid;
+  place-items: center;
+  animation: g-splash-in 0.45s ease both;
 }
 
 .g-splash-logo {
   position: relative;
-  width: min(74vw, 290px);
-  height: 108px;
+  width: min(72vw, 300px);
+  /* Proporción real del logo (viewBox recortado): así el centrado es exacto. */
+  aspect-ratio: 282.4 / 91.1;
+  /* Se mantiene ~2 s visible y luego se desvanece antes de navegar. */
+  animation: g-splash-out 0.5s ease 2s forwards;
 }
 
 .g-splash-logo img {
   object-fit: contain;
 }
 
-.g-splash-by {
-  color: var(--g-azul);
-  font-family: var(--g-font-display);
-  font-size: 1.35rem;
-  font-weight: 700;
+@keyframes g-splash-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes g-splash-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-splash-brand,
+  .g-splash-logo {
+    animation: none;
+  }
 }
