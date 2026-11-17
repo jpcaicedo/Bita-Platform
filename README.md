@@ -24,6 +24,21 @@ npm run start:dev         # http://localhost:3000/api
 Endpoints útiles: `GET /api/health`, `POST /api/auth/register`,
 `POST /api/auth/login`, `GET /api/auth/me`.
 
+## Frontend
+
+La aplicación móvil está en [`frontend/`](./frontend/README.md) y usa Next.js 16
+con Server Components y Server Actions. Consume esta API por HTTP.
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local   # BITA_API_URL=http://localhost:3000/api
+npm run dev                  # http://localhost:3001
+```
+
+El detalle de rutas, roles y decisiones técnicas está en
+[`frontend/README.md`](./frontend/README.md).
+
 ## Endpoints
 
 Todas las rutas van bajo el prefijo `/api`. Salvo `POST /auth/register`,
