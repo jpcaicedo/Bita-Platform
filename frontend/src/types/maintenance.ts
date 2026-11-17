@@ -39,3 +39,9 @@ export interface MaintenanceRecord {
   createdAt: string;
   maintenanceType: MaintenanceType;
 }
+
+// Respuesta de POST /workshops/vehicles/:id/maintenance.
+export interface CreatedMaintenance {
+  record: MaintenanceRecord;
+  nextMaintenance: NextMaintenance;
+}
