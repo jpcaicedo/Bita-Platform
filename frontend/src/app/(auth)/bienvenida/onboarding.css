@@ -1,0 +1,132 @@
+.g-onb {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: 18px 20px 0;
+  overflow-x: hidden;
+  background: var(--g-crema);
+}
+
+.g-onb-top {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 30px;
+  z-index: 3;
+}
+
+.g-onb-skip {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-azul);
+  color: var(--g-blanco);
+  font-family: var(--g-font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.g-onb-arch {
+  position: relative;
+  z-index: 1;
+  margin: -10px -12px 0;
+  padding: 14px 26px 20px;
+  border-radius: 0 0 50% 50% / 0 0 20% 20%;
+  background: #faf0d8;
+  text-align: center;
+}
+
+.g-onb-title {
+  max-width: 300px;
+  margin: 0 auto;
+  font-size: clamp(1.55rem, 7.4vw, 2rem);
+  font-weight: 800;
+  color: var(--g-azul);
+}
+
+.g-onb-art {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 184px;
+  margin-top: -6px;
+  padding: 6px 0 14px;
+}
+
+.g-onb-art-img {
+  width: auto;
+  height: auto;
+  max-width: 82%;
+  max-height: clamp(170px, 26vh, 250px);
+  object-fit: contain;
+}
+
+.g-onb-panel {
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 4px -20px 0;
+  padding: 26px 24px 34px;
+  border-radius: 34px 34px 0 0;
+  background: var(--g-beige);
+}
+
+.g-onb-text {
+  max-width: 340px;
+  margin: 0 auto;
+  padding: 0 2px;
+  font-size: clamp(1.05rem, 4.7vw, 1.28rem);
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--g-texto-suave);
+}
+
+.g-onb-actions {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.g-onb-actions form {
+  width: 100%;
+}
+
+.g-onb-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.g-onb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--g-radio-pill);
+  background: #cfc7b5;
+  transition: width 0.2s ease;
+}
+
+.g-onb-dot.is-active {
+  width: 24px;
+  background: var(--g-naranja);
+}
+
+.g-onb-skeleton-title {
+  width: 80%;
+  height: 30px;
+  margin: 8px auto 0;
+}
+
+.g-onb-skeleton-text {
+  width: 90%;
+  height: 38px;
+  margin: 12px auto 0;
+}
+
+.g-onb-skeleton-button {
+  width: 100%;
+  height: 52px;
+}

@@ -1,0 +1,362 @@
+/* ============================================================
+   BITA — estilos globales
+   Diseño móvil primero: una columna de máximo 430px centrada.
+   Todas las clases de este frente usan el prefijo "g-".
+   ============================================================ */
+
+:root {
+  /* Paleta de los mockups */
+  --g-crema: #fdf6e6;
+  --g-beige: #f0ebdc;
+  --g-naranja: #ce7f34;
+  --g-naranja-oscuro: #b86c27;
+  --g-azul: #295670;
+  --g-azul-claro: #dcecf3;
+  --g-verde-pastilla: #dcecea;
+  --g-verde-texto: #2f6f63;
+  --g-alerta: #fdede4;
+  --g-alerta-texto: #b5543f;
+  --g-lila: #efe7f7;
+  --g-lila-texto: #6b4a8a;
+  --g-blanco: #ffffff;
+  --g-input: #fafafa;
+  --g-borde: #e5e0d4;
+  --g-texto: #262522;
+  --g-texto-suave: #6f6a5f;
+  --g-sombra: 0 10px 30px rgba(58, 47, 30, 0.08);
+  --g-sombra-boton: 0 8px 18px rgba(206, 127, 52, 0.28);
+  --g-radio-pill: 999px;
+  --g-radio-tarjeta: 24px;
+
+  /* Las variables reales las inyecta next/font en el layout raíz. */
+  --g-font-display: var(--font-outfit), system-ui, sans-serif;
+  --g-font-body: var(--font-quicksand), system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--g-crema);
+  color: var(--g-texto);
+  font-family: var(--g-font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--g-font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--g-azul);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Columna móvil. En escritorio se ve igual, solo centrada. */
+.g-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--g-crema);
+  overflow-x: hidden;
+}
+
+.g-screen {
+  min-height: 100dvh;
+  padding: 0 20px 32px;
+}
+
+.g-display {
+  font-family: var(--g-font-display);
+  font-weight: 700;
+  color: var(--g-azul);
+}
+
+.g-title {
+  font-family: var(--g-font-display);
+  font-size: clamp(1.6rem, 7vw, 2rem);
+  font-weight: 800;
+  color: var(--g-azul);
+  line-height: 1.1;
+}
+
+.g-subtitle {
+  font-size: 0.86rem;
+  color: var(--g-texto-suave);
+  line-height: 1.5;
+}
+
+.g-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Botones */
+.g-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: var(--g-radio-pill);
+  font-family: var(--g-font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.g-btn:active {
+  transform: scale(0.985);
+}
+
+.g-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.g-btn--primary {
+  width: 100%;
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: var(--g-sombra-boton);
+}
+
+.g-btn--primary:hover:not(:disabled) {
+  background: var(--g-naranja-oscuro);
+}
+
+.g-btn--soft {
+  background: var(--g-beige);
+  color: var(--g-azul);
+}
+
+.g-btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--g-borde);
+  color: var(--g-azul);
+}
+
+/* Formularios */
+.g-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.g-label {
+  font-family: var(--g-font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--g-azul);
+}
+
+.g-input,
+.g-textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 20px;
+  border: 1.5px solid var(--g-borde);
+  border-radius: var(--g-radio-pill);
+  background: var(--g-input);
+  color: var(--g-texto);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.g-textarea {
+  min-height: 120px;
+  padding: 16px 20px;
+  border-radius: 22px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.g-input:focus,
+.g-textarea:focus {
+  border-color: var(--g-naranja);
+  box-shadow: 0 0 0 3px rgba(206, 127, 52, 0.14);
+}
+
+.g-input::placeholder,
+.g-textarea::placeholder {
+  color: #a49d8f;
+}
+
+.g-help {
+  font-size: 0.72rem;
+  color: var(--g-texto-suave);
+}
+
+/* Tarjetas y pastillas */
+.g-card {
+  background: var(--g-blanco);
+  border-radius: var(--g-radio-tarjeta);
+  box-shadow: var(--g-sombra);
+}
+
+.g-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--g-radio-pill);
+  font-family: var(--g-font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.g-pill--blue {
+  background: var(--g-azul-claro);
+  color: var(--g-azul);
+}
+
+.g-pill--green {
+  background: var(--g-verde-pastilla);
+  color: var(--g-verde-texto);
+}
+
+.g-pill--alert {
+  background: var(--g-alerta);
+  color: var(--g-alerta-texto);
+}
+
+.g-pill--lilac {
+  background: var(--g-lila);
+  color: var(--g-lila-texto);
+}
+
+/* Avisos (role="alert" para accesibilidad) */
+.g-alert {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.g-alert--error {
+  background: var(--g-alerta);
+  color: var(--g-alerta-texto);
+}
+
+.g-alert--ok {
+  background: var(--g-verde-pastilla);
+  color: var(--g-verde-texto);
+}
+
+.g-alert--info {
+  background: var(--g-azul-claro);
+  color: var(--g-azul);
+}
+
+/* Enlaces de texto */
+.g-link {
+  color: var(--g-naranja);
+  font-weight: 700;
+}
+
+.g-link:disabled,
+.g-link[aria-disabled='true'] {
+  color: var(--g-texto-suave);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Animación de esqueletos de carga */
+.g-skeleton {
+  border-radius: 18px;
+  background: linear-gradient(
+    100deg,
+    var(--g-beige) 20%,
+    #f7f3e8 40%,
+    var(--g-beige) 60%
+  );
+  background-size: 200% 100%;
+  animation: g-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes g-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

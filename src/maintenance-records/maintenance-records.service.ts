@@ -160,10 +160,9 @@ export class MaintenanceRecordsService {
     workshopId: string | null,
     dto: CreateMaintenanceRecordDto,
   ) {
-    const maintenanceType =
-      await this.maintenanceTypesService.findActiveOrFail(
-        dto.maintenanceTypeId,
-      );
+    const maintenanceType = await this.maintenanceTypesService.findActiveOrFail(
+      dto.maintenanceTypeId,
+    );
     const serviceDate = dto.serviceDate.slice(0, 10);
 
     this.maintenanceRulesService.ensureServiceDateIsNotInFuture(serviceDate);

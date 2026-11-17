@@ -67,7 +67,7 @@ describe('WorkshopsService', () => {
     const saved = {
       ...built,
       id: 'profile-1',
-    } as WorkshopProfileEntity;
+    };
 
     repositoryMock.existsBy.mockResolvedValue(false);
     repositoryMock.create.mockReturnValue(built);
@@ -122,7 +122,7 @@ describe('WorkshopsService', () => {
       id: 'profile-1',
       userId: 'user-1',
     } as WorkshopProfileEntity;
-    const saved = { ...profile, name: 'Nuevo nombre' } as WorkshopProfileEntity;
+    const saved = { ...profile, name: 'Nuevo nombre' };
 
     repositoryMock.findOneBy.mockResolvedValue(profile);
     repositoryMock.save.mockResolvedValue(saved);

@@ -228,7 +228,7 @@ describe('RemindersService', () => {
   it('returns the reminders of a vehicle ordered by due date', async () => {
     const reminders = [{ id: 'reminder-1' }] as SmartReminderEntity[];
 
-    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({} as VehicleEntity);
+    vehiclesServiceMock.findOwnedOrFail.mockResolvedValue({});
     remindersRepositoryMock.find.mockResolvedValue(reminders);
 
     const result = await service.findByVehicle('vehicle-1', 'owner-1');
@@ -377,7 +377,9 @@ describe('RemindersService', () => {
     remindersRepositoryMock.find.mockResolvedValue([reminder]);
     reminderRulesServiceMock.evaluateTrigger.mockReturnValue('upcoming');
     notificationsRepositoryMock.existsBy.mockResolvedValue(false);
-    notificationsRepositoryMock.create.mockReturnValue({ id: 'notification-1' });
+    notificationsRepositoryMock.create.mockReturnValue({
+      id: 'notification-1',
+    });
     notificationsRepositoryMock.save.mockResolvedValue({});
 
     const created = await service.generateDueNotifications();
