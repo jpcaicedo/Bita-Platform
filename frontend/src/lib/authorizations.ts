@@ -63,8 +63,13 @@ export function splitAuthorizations(authorizations: WorkshopAuthorization[]): {
   };
 }
 
-export function workshopLabel(workshopId: string): string {
-  return `Taller ${workshopId.slice(0, 8).toUpperCase()}`;
+export function workshopLabel(
+  authorization: Pick<WorkshopAuthorization, 'workshopId' | 'workshopName'>,
+): string {
+  return (
+    authorization.workshopName ??
+    `Taller ${authorization.workshopId.slice(0, 8).toUpperCase()}`
+  );
 }
 
 export function permissionOf(authorization: WorkshopAuthorization): {

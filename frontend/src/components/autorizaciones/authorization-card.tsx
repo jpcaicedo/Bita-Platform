@@ -30,7 +30,7 @@ export function AuthorizationCard({
           <WorkshopIcon size={20} />
         </span>
         <span className="g-aut-card-info">
-          <strong>{workshopLabel(authorization.workshopId)}</strong>
+          <strong>{workshopLabel(authorization)}</strong>
           <span>{permission.description}</span>
         </span>
         <span className={`g-pill ${status.className}`}>{status.label}</span>
