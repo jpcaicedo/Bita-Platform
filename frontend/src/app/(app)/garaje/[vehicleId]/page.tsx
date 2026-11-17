@@ -166,19 +166,31 @@ async function VehicleDetailContent({
           </div>
         </div>
 
-        {urgente && (
-          <div className={`g-garage-alert g-garage-alert--${urgente.status}`}>
-            <span className="g-garage-alert-icon">
-              <GarageIcon name="campana" width={16.7} height={16.7} />
-            </span>
-            <div className="g-garage-alert-body">
-              <div className="g-garage-alert-title">
-                Alerta Preventiva
-                <span>{etiquetaEstado(urgente.status)}</span>
-              </div>
-              <p className="g-garage-alert-text">
+        {/* La alerta lleva a los recordatorios del vehículo (frente C). */}
+        <Link
+          href={`/garaje/${auto.id}/recordatorios`}
+          className={`g-garage-alert g-garage-alert--${urgente?.status ?? 'up_to_date'}`}
+        >
+          <span className="g-garage-alert-icon">
+            <GarageIcon name="campana" width={16.7} height={16.7} />
+          </span>
+          <div className="g-garage-alert-body">
+            <div className="g-garage-alert-title">
+              Alerta Preventiva
+              <span>
+                {urgente ? etiquetaEstado(urgente.status) : 'Recordatorios'}
+              </span>
+            </div>
+            <p className="g-garage-alert-text">
+              {urgente ? (
                 <TextoAlerta item={urgente} km={auto.currentKilometers} />
-              </p>
+              ) : (
+                <>
+                  Sin alertas por ahora. <b>Crea un recordatorio</b>.
+                </>
+              )}
+            </p>
+            {urgente && (
               <div className={`g-garage-bar g-garage-bar--${urgente.status}`}>
                 <span
                   style={{
@@ -186,9 +198,9 @@ async function VehicleDetailContent({
                   }}
                 />
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </Link>
       </section>
 
       <Link

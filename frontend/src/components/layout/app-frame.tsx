@@ -40,6 +40,8 @@ function screenMeta(pathname: string): ScreenMeta {
   if (pathname.startsWith('/taller/perfil')) {
     return { title: 'Perfil del Taller', back: '/taller' };
   }
+  // "/talleres" (dueño) también empieza por "/taller": va primero.
+  if (pathname.startsWith('/talleres')) return { title: 'Talleres' };
   if (pathname.startsWith('/taller')) return { title: 'Vehículos' };
 
   const reminders = pathname.match(/^\/garaje\/([^/]+)\/recordatorios(\/.*)?$/);
@@ -80,7 +82,6 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Talleres Autorizados', back: `/garaje/${vehicleId}` };
   }
 
-  if (pathname.startsWith('/talleres')) return { title: 'Talleres' };
   if (pathname.startsWith('/garaje/nuevo')) {
     return { title: 'Nuevo Vehículo', back: '/garaje' };
   }
@@ -93,7 +94,10 @@ function screenMeta(pathname: string): ScreenMeta {
 function isActive(pathname: string, href: string): boolean {
   // "/taller" solo coincide exacto para que /taller/vehiculos marque Historial.
   if (href === '/taller' || href === '/garaje') {
-    if (href === '/garaje' && /^\/garaje\/[^/]+\/recordatorios/.test(pathname)) {
+    if (
+      href === '/garaje' &&
+      /^\/garaje\/[^/]+\/recordatorios/.test(pathname)
+    ) {
       return true;
     }
     return pathname === href;
@@ -103,7 +107,10 @@ function isActive(pathname: string, href: string): boolean {
     return true;
   }
   // Las autorizaciones de un vehículo pertenecen a Talleres.
-  if (href === '/talleres' && /^\/garaje\/[^/]+\/autorizaciones/.test(pathname)) {
+  if (
+    href === '/talleres' &&
+    /^\/garaje\/[^/]+\/autorizaciones/.test(pathname)
+  ) {
     return true;
   }
   return pathname === href || pathname.startsWith(`${href}/`);
