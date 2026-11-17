@@ -1,0 +1,178 @@
+.g-app-shell {
+  position: relative;
+  min-height: 100dvh;
+  padding-bottom: 108px;
+}
+
+.g-app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 10px;
+}
+
+.g-app-car,
+.g-app-back,
+.g-app-user {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+}
+
+.g-app-car,
+.g-app-user {
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: 0 6px 14px rgba(206, 127, 52, 0.25);
+}
+
+.g-app-back {
+  background: transparent;
+  color: var(--g-azul);
+  padding: 0;
+}
+
+.g-app-heading {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--g-font-display);
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--g-azul);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.g-app-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.g-app-bell {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--g-azul);
+  opacity: 0.8;
+}
+
+.g-app-bell:disabled {
+  cursor: default;
+}
+
+.g-app-main {
+  padding: 6px 20px 20px;
+}
+
+/* Barra inferior flotante — igual al Figma (componente "Nav") */
+.g-bottom-nav {
+  position: fixed;
+  z-index: 50;
+  right: 50%;
+  bottom: 14px;
+  transform: translateX(50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 40px);
+  max-width: 350px;
+  height: 64px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 24px rgba(28, 27, 31, 0.08);
+}
+
+.g-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 3px 2px;
+  color: #544338;
+  font-family: var(--font-jakarta), var(--g-font-body);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.44px;
+}
+
+.g-nav-icon {
+  display: grid;
+  place-items: center;
+  height: 19px;
+}
+
+/* Íconos del Figma pintados con máscara (toman el color del texto). */
+.g-nav-svg {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask: var(--g-nav-svg) center / contain no-repeat;
+  mask: var(--g-nav-svg) center / contain no-repeat;
+}
+
+.g-nav-label {
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+/* Botón central "+" elevado */
+.g-nav-item--primary {
+  position: relative;
+  width: 48px;
+  min-width: 48px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
+}
+
+.g-nav-plus {
+  position: absolute;
+  top: -18px;
+  left: 2px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #914800;
+  color: #fff;
+  box-shadow: 0 8px 20px -4px rgba(145, 72, 0, 0.45);
+}
+
+/* El Figma no tiene texto bajo el "+": se deja solo para lectores de pantalla */
+.g-nav-item--primary .g-nav-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Pantalla de carga del layout de la app */
+.g-app-loading {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px;
+}
+
+.g-app-loading-card {
+  width: min(100%, 360px);
+  height: 180px;
+}

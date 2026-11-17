@@ -1,0 +1,866 @@
+/* ============================================================
+   Módulo de taller: recepción, registro, comprobante e historial.
+   Móvil primero, prefijo "g-", misma paleta del resto de BITA.
+   ============================================================ */
+
+.g-taller {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.g-taller-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.g-taller-head h2 {
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.g-taller-head p {
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--g-texto-suave);
+}
+
+.g-taller-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-taller-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.g-taller-section-head h3 {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.g-taller-section-head span {
+  font-size: 0.74rem;
+  color: var(--g-texto-suave);
+}
+
+.g-taller-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--g-naranja);
+  font-family: var(--g-font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ---------- Recepción por placa ---------- */
+
+.g-plate-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px;
+}
+
+.g-plate-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.g-plate-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: var(--g-azul-claro);
+  color: var(--g-azul);
+}
+
+.g-plate-card-head h3 {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.g-plate-card-head p {
+  margin-top: 2px;
+  font-size: 0.76rem;
+  color: var(--g-texto-suave);
+}
+
+.g-plate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.g-plate-row {
+  display: flex;
+  gap: 8px;
+}
+
+.g-plate-row .g-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--g-font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.g-plate-row .g-btn {
+  flex: 0 0 auto;
+  width: 58px;
+  min-height: 54px;
+  padding: 0;
+}
+
+.g-plate-error {
+  margin: 0;
+}
+
+.g-vehicle-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--g-crema);
+}
+
+.g-vehicle-plate {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 82px;
+  padding: 10px 10px 8px;
+  border: 2px solid var(--g-azul);
+  border-radius: 8px;
+  background: var(--g-blanco);
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.g-vehicle-strip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.g-vehicle-strip-info strong {
+  overflow: hidden;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.94rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g-vehicle-strip-info span {
+  font-size: 0.76rem;
+  color: var(--g-texto-suave);
+}
+
+.g-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 22px;
+  text-align: center;
+}
+
+.g-state-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+  background: var(--g-beige);
+  color: var(--g-azul);
+}
+
+.g-state-card h3 {
+  font-size: 1.15rem;
+}
+
+.g-state-card p {
+  max-width: 300px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--g-texto-suave);
+}
+
+.g-state-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.g-state-actions .g-btn {
+  width: 100%;
+}
+
+.g-state-card--alert .g-state-icon {
+  background: var(--g-alerta);
+  color: var(--g-alerta-texto);
+}
+
+.g-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ---------- Lista de vehículos ---------- */
+
+.g-vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-vehicle-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  transition: transform 0.15s ease;
+}
+
+.g-vehicle-card:active {
+  transform: scale(0.99);
+}
+
+.g-vehicle-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.g-vehicle-card-body strong {
+  overflow: hidden;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g-vehicle-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--g-texto-suave);
+}
+
+.g-vehicle-card .g-pill {
+  align-self: flex-start;
+}
+
+.g-vehicle-chevron {
+  flex: 0 0 auto;
+  color: #b3ab9c;
+}
+
+.g-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 26px 20px;
+  text-align: center;
+}
+
+.g-empty .g-state-icon {
+  width: 50px;
+  height: 50px;
+}
+
+.g-empty p {
+  font-size: 0.8rem;
+  color: var(--g-texto-suave);
+}
+
+.g-search-form {
+  display: flex;
+  gap: 8px;
+}
+
+.g-search-form .g-input {
+  flex: 1;
+  min-height: 46px;
+  font-size: 0.85rem;
+}
+
+.g-search-form .g-btn {
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 18px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Perfil del taller ---------- */
+
+.g-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+.g-profile-badge {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 58px;
+  height: 58px;
+  border-radius: 20px;
+  background: var(--g-naranja);
+  color: var(--g-blanco);
+  box-shadow: var(--g-sombra-boton);
+}
+
+.g-profile-card h2 {
+  font-size: 1.12rem;
+  font-weight: 800;
+}
+
+.g-profile-card p {
+  margin-top: 3px;
+  font-size: 0.78rem;
+  color: var(--g-texto-suave);
+}
+
+.g-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px;
+}
+
+.g-form-card h3 {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.g-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--g-borde);
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--g-azul);
+}
+
+.g-form-section-title svg {
+  color: var(--g-naranja);
+}
+
+.g-register-note {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+  padding: 0 6px 4px;
+}
+
+.g-register-note svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--g-texto-suave);
+}
+
+.g-form-card .g-btn {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.g-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.g-form-span {
+  grid-column: 1 / -1;
+}
+
+.g-field .g-input,
+.g-field .g-textarea,
+.g-field select.g-input {
+  border-radius: 16px;
+}
+
+.g-field select.g-input {
+  appearance: none;
+  padding-right: 42px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--g-azul) 50%),
+    linear-gradient(135deg, var(--g-azul) 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 24px,
+    calc(100% - 16px) 24px;
+  background-repeat: no-repeat;
+  background-size: 6px 6px;
+}
+
+.g-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.g-field-row .g-input {
+  flex: 1;
+}
+
+.g-field-unit {
+  flex: 0 0 auto;
+  font-family: var(--g-font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--g-texto-suave);
+}
+
+/* ---------- Editor de repuestos ---------- */
+
+.g-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.g-parts .g-help {
+  margin-bottom: 2px;
+}
+
+.g-parts-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.g-parts-row .g-input {
+  flex: 1;
+  min-height: 48px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+}
+
+.g-parts-add {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--g-azul);
+  color: var(--g-blanco);
+}
+
+.g-parts-add:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.g-parts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.g-part-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 6px 5px 12px;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-azul-claro);
+  color: var(--g-azul);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.g-part-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g-part-remove {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(41, 86, 112, 0.14);
+  color: var(--g-azul);
+}
+
+/* ---------- Comprobante y detalle ---------- */
+
+.g-receipt-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px 4px;
+  text-align: center;
+}
+
+.g-receipt-check {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: var(--g-verde-pastilla);
+  color: var(--g-verde-texto);
+}
+
+.g-receipt-hero h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.g-receipt-hero p {
+  max-width: 290px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--g-texto-suave);
+}
+
+.g-receipt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.g-receipt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--g-borde);
+}
+
+.g-receipt-head strong {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.g-receipt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 0.82rem;
+}
+
+.g-receipt-row dt {
+  flex: 0 0 auto;
+  color: var(--g-texto-suave);
+}
+
+.g-receipt-row dd {
+  margin: 0;
+  color: var(--g-texto);
+  font-weight: 600;
+  text-align: right;
+}
+
+.g-receipt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.g-obs-block {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--g-crema);
+}
+
+.g-obs-block h4 {
+  margin-bottom: 4px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--g-texto-suave);
+}
+
+.g-obs-block p {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.g-obs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.g-obs-list div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.g-obs-label {
+  font-family: var(--g-font-display);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--g-texto-suave);
+}
+
+.g-obs-value {
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.g-next-card {
+  padding: 16px 18px;
+  border-left: 4px solid var(--g-naranja);
+}
+
+.g-next-card p {
+  font-size: 0.76rem;
+  color: var(--g-texto-suave);
+}
+
+.g-next-card strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.g-receipt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.g-receipt-actions .g-btn {
+  width: 100%;
+}
+
+/* ---------- Historial y estado ---------- */
+
+.g-health-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+}
+
+.g-health-card h3 {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.g-health-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.g-health-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border-left: 4px solid var(--g-verde-pastilla);
+  border-radius: 12px;
+  background: var(--g-crema);
+}
+
+.g-health-item--upcoming {
+  border-left-color: var(--g-lila);
+}
+
+.g-health-item--overdue {
+  border-left-color: var(--g-alerta-texto);
+}
+
+.g-health-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.g-health-info strong {
+  overflow: hidden;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g-health-info span {
+  font-size: 0.71rem;
+  color: var(--g-texto-suave);
+}
+
+.g-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-timeline-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-left: 4px solid var(--g-azul-claro);
+}
+
+.g-timeline-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.g-timeline-head strong {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.g-timeline-head span {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  color: var(--g-texto-suave);
+}
+
+.g-timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.76rem;
+  color: var(--g-texto-suave);
+}
+
+.g-timeline-note {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.79rem;
+  line-height: 1.45;
+  color: var(--g-texto);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.g-timeline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-start;
+  color: var(--g-naranja);
+  font-family: var(--g-font-display);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.g-vehicle-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+}
+
+.g-vehicle-detail-head .g-vehicle-plate {
+  min-width: 92px;
+  padding: 12px 10px;
+  font-size: 1rem;
+}
+
+.g-vehicle-detail-head .g-vehicle-strip-info {
+  flex: 1;
+}
+
+.g-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.g-detail-actions .g-btn {
+  width: 100%;
+}
+
+/* ---------- Esqueletos ---------- */
+
+.g-taller-skeleton-head {
+  width: 65%;
+  height: 32px;
+}
+
+.g-taller-skeleton-text {
+  width: 90%;
+  height: 16px;
+}
+
+.g-taller-skeleton-card {
+  height: 118px;
+}
+
+.g-taller-skeleton-tall {
+  height: 190px;
+}

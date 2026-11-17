@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -21,4 +22,9 @@ export class RegisterDto {
     message: 'El campo solo puede contener letras, números, espacios y guiones',
   })
   password!: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(60)
+  username?: string;
 }

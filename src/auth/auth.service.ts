@@ -24,13 +24,18 @@ export class AuthService {
     const passwordHash = await argon2.hash(dto.password, {
       type: argon2.argon2id,
     }); // La contraseña texto plano se vuelve hash
-    const user = this.usersRepository.create({ email, passwordHash });
+    const user = this.usersRepository.create({
+      email,
+      passwordHash,
+      username: dto.username ?? null,
+    });
 
     try {
       const savedUser = await this.usersRepository.save(user);
       return {
         id: savedUser.id,
         email: savedUser.email,
+        username: savedUser.username ?? null,
         isActive: savedUser.isActive,
         createdAt: savedUser.createdAt,
       };

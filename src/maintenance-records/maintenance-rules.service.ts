@@ -38,7 +38,9 @@ export class MaintenanceRulesService {
 
     if (maintenanceType.defaultIntervalMonths) {
       const date = new Date(serviceDate);
-      date.setUTCMonth(date.getUTCMonth() + maintenanceType.defaultIntervalMonths);
+      date.setUTCMonth(
+        date.getUTCMonth() + maintenanceType.defaultIntervalMonths,
+      );
       dueDate = date.toISOString().split('T')[0];
     }
 
@@ -55,7 +57,10 @@ export class MaintenanceRulesService {
   ): MaintenanceHealthStatus {
     const today = new Date();
 
-    if (next.dueKilometers !== null && currentKilometers >= next.dueKilometers) {
+    if (
+      next.dueKilometers !== null &&
+      currentKilometers >= next.dueKilometers
+    ) {
       return 'overdue';
     }
 
@@ -63,12 +68,16 @@ export class MaintenanceRulesService {
       return 'overdue';
     }
 
-    if (next.dueKilometers !== null && next.dueKilometers - currentKilometers <= 500) {
+    if (
+      next.dueKilometers !== null &&
+      next.dueKilometers - currentKilometers <= 500
+    ) {
       return 'upcoming';
     }
 
     if (next.dueDate !== null) {
-      const millisecondsLeft = new Date(next.dueDate).getTime() - today.getTime();
+      const millisecondsLeft =
+        new Date(next.dueDate).getTime() - today.getTime();
       const daysLeft = millisecondsLeft / (1000 * 60 * 60 * 24);
 
       if (daysLeft <= 30) {

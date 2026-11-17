@@ -48,6 +48,7 @@ describe('AuthService', () => {
     const saved = {
       id: 'user-1',
       email: 'luis@example.com',
+      username: 'LuisF',
       passwordHash: 'hash',
       isActive: true,
       createdAt,
@@ -59,18 +60,49 @@ describe('AuthService', () => {
     const result = await service.register({
       email: 'Luis@Example.com',
       password: 'Secret123',
+      username: 'LuisF',
     });
 
     expect(repositoryMock.create).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'luis@example.com' }),
+      expect.objectContaining({
+        email: 'luis@example.com',
+        username: 'LuisF',
+      }),
     );
     expect(repositoryMock.save).toHaveBeenCalledWith(built);
     expect(result).toEqual({
       id: 'user-1',
       email: 'luis@example.com',
+      username: 'LuisF',
       isActive: true,
       createdAt,
     });
+  });
+
+  it('registers a user without username and returns null', async () => {
+    const createdAt = new Date();
+    const built = { email: 'luis@example.com' } as UserEntity;
+    const saved = {
+      id: 'user-2',
+      email: 'luis@example.com',
+      username: null,
+      passwordHash: 'hash',
+      isActive: true,
+      createdAt,
+    } as UserEntity;
+
+    repositoryMock.create.mockReturnValue(built);
+    repositoryMock.save.mockResolvedValue(saved);
+
+    const result = await service.register({
+      email: 'luis@example.com',
+      password: 'Secret123',
+    });
+
+    expect(repositoryMock.create).toHaveBeenCalledWith(
+      expect.objectContaining({ username: null }),
+    );
+    expect(result.username).toBeNull();
   });
 
   it('throws UnauthorizedException when the user does not exist', async () => {
