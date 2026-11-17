@@ -41,6 +41,46 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Perfil del Taller', back: '/taller' };
   }
   if (pathname.startsWith('/taller')) return { title: 'Vehículos' };
+
+  const reminders = pathname.match(/^\/garaje\/([^/]+)\/recordatorios(\/.*)?$/);
+  if (reminders) {
+    const [, vehicleId, rest] = reminders;
+
+    if (rest?.startsWith('/nuevo')) {
+      return {
+        title: 'Nuevo Recordatorio',
+        back: `/garaje/${vehicleId}/recordatorios`,
+      };
+    }
+    if (rest) {
+      return {
+        title: 'Completar Recordatorio',
+        back: `/garaje/${vehicleId}/recordatorios`,
+      };
+    }
+    return { title: 'Recordatorios', back: `/garaje/${vehicleId}` };
+  }
+
+  const authorizations = pathname.match(
+    /^\/garaje\/([^/]+)\/autorizaciones(\/.*)?$/,
+  );
+  if (authorizations) {
+    const [, vehicleId, rest] = authorizations;
+    const list = `/garaje/${vehicleId}/autorizaciones`;
+
+    if (rest?.startsWith('/nueva')) {
+      return { title: 'Otorgar Acceso', back: list };
+    }
+    if (rest?.endsWith('/revocar')) {
+      return { title: 'Revocar Acceso', back: list };
+    }
+    if (rest?.endsWith('/confirmacion')) {
+      return { title: 'Autorización Concedida', back: list };
+    }
+    return { title: 'Talleres Autorizados', back: `/garaje/${vehicleId}` };
+  }
+
+  if (pathname.startsWith('/talleres')) return { title: 'Talleres' };
   if (pathname.startsWith('/garaje/nuevo')) {
     return { title: 'Nuevo Vehículo', back: '/garaje' };
   }
@@ -52,9 +92,18 @@ function screenMeta(pathname: string): ScreenMeta {
 
 function isActive(pathname: string, href: string): boolean {
   // "/taller" solo coincide exacto para que /taller/vehiculos marque Historial.
-  if (href === '/taller' || href === '/garaje') return pathname === href;
+  if (href === '/taller' || href === '/garaje') {
+    if (href === '/garaje' && /^\/garaje\/[^/]+\/recordatorios/.test(pathname)) {
+      return true;
+    }
+    return pathname === href;
+  }
   // El detalle de un servicio también pertenece al historial.
   if (href === '/taller/vehiculos' && pathname.startsWith('/taller/servicio')) {
+    return true;
+  }
+  // Las autorizaciones de un vehículo pertenecen a Talleres.
+  if (href === '/talleres' && /^\/garaje\/[^/]+\/autorizaciones/.test(pathname)) {
     return true;
   }
   return pathname === href || pathname.startsWith(`${href}/`);
