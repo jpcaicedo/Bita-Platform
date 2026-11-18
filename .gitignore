@@ -67,5 +67,5 @@ dist/
 .secrets/
 apiKeys.txt
 
-# carpeta original que el usuario dejó como referencia (ya está en design-ref/)
+# carpeta original que el usuario dejó como referencia (ya está en frontend/assets/)
 Frontend reference/
