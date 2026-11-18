@@ -9,6 +9,24 @@ export function getVehicleAuthorizations(
   );
 }
 
+// "12 sept 2023". Devuelve null si la fecha no viene o no es válida.
+export function fechaAutorizacion(iso: string | undefined): string | null {
+  if (!iso) return null;
+
+  const fecha = new Date(iso);
+  if (Number.isNaN(fecha.getTime())) return null;
+
+  return new Intl.DateTimeFormat('es-CO', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'America/Bogota',
+  })
+    .format(fecha)
+    .replace('.', '')
+    .replace(/ de /g, ' ');
+}
+
 export function grantAuthorization(
   vehicleId: string,
   body: { workshopId: string; canRead: boolean; canWrite: boolean },

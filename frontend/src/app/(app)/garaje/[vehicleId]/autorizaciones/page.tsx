@@ -135,7 +135,10 @@ async function AuthorizationsContent({
       )}
 
       <div className="g-gest-actions">
-        <Link href={`${base}/nueva`} className="g-btn g-btn--primary">
+        <Link
+          href={`/talleres/otorgar?vehiculo=${vehicleId}`}
+          className="g-btn g-btn--primary"
+        >
           <WorkshopIcon size={18} />
           Otorgar nueva autorización
           <ArrowRightIcon size={18} />

@@ -17,14 +17,136 @@
 }
 
 .g-gest-head h2 {
-  font-size: 1.55rem;
+  font-size: 26px;
   font-weight: 800;
+  line-height: 32px;
 }
 
 .g-gest-head p {
-  font-size: 0.83rem;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 18px;
   color: var(--g-texto-suave);
+}
+
+/* Etiqueta pequeña sobre el título (Figma: "GESTIÓN DE ACCESO",
+   "PASO 1 DE 2 · CONFIGURAR ACCESO"). */
+.g-gest-head .g-gest-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 14px;
+  color: var(--g-naranja);
+  font-family: var(--g-font-display);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.g-gest-step {
+  margin-right: 4px;
+  padding: 2px 8px;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-azul);
+  color: var(--g-blanco);
+  font-size: 10px;
+}
+
+/* ---------- Talleres autorizados (Figma "Dueño - Lista de Autorizaciones") ---------- */
+
+.g-gest--talleres {
+  gap: 20px;
+  padding-top: 0;
+}
+
+.g-gest-banner {
+  display: flex;
+  gap: 12px;
+  min-height: 100px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--g-azul-claro);
+}
+
+.g-gest-banner-icon,
+.g-gest-control-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--g-blanco);
+  color: var(--g-azul);
+}
+
+.g-gest-banner strong,
+.g-gest-control strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 16px;
+}
+
+.g-gest-banner span span,
+.g-gest-control p {
+  display: block;
+  color: var(--g-texto-suave);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.g-gest-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.g-gest-segment {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-beige);
+}
+
+.g-gest-segment-item {
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  padding: 0 16px;
+  border-radius: var(--g-radio-pill);
+  color: var(--g-texto-suave);
+  font-family: var(--g-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.g-gest-segment-item.is-active {
+  background: var(--g-blanco);
+  color: var(--g-azul);
+  box-shadow: 0 2px 8px rgba(58, 47, 30, 0.08);
+}
+
+.g-gest-tabs-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  color: var(--g-texto-suave);
+  font-family: var(--g-font-display);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.g-gest-tabs-all.is-active {
+  color: var(--g-naranja);
 }
 
 .g-gest-section {
@@ -432,23 +554,179 @@
 .g-gest-hero-check {
   display: grid;
   place-items: center;
-  width: 74px;
-  height: 74px;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 8px;
   border-radius: 50%;
   background: var(--g-verde-pastilla);
   color: var(--g-verde-texto);
 }
 
+.g-gest-hero-tag {
+  padding: 4px 12px;
+  border-radius: var(--g-radio-pill);
+  background: var(--g-verde-pastilla);
+  color: var(--g-verde-texto);
+  font-family: var(--g-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
 .g-gest-hero h2 {
-  font-size: 1.45rem;
+  max-width: 312px;
+  font-size: 26px;
   font-weight: 800;
+  line-height: 32px;
 }
 
 .g-gest-hero p {
-  max-width: 290px;
-  font-size: 0.82rem;
-  line-height: 1.5;
+  max-width: 320px;
+  font-size: 14px;
+  line-height: 21px;
   color: var(--g-texto-suave);
+}
+
+/* ---------- Voucher (Figma "Dueño - Confirmación Autorización Otorgada") ---------- */
+
+.g-gest-voucher {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px 20px;
+  overflow: hidden;
+}
+
+.g-gest-voucher-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 56px;
+  margin: 0 -20px;
+  padding: 0 20px;
+  background: var(--g-azul-claro);
+}
+
+.g-gest-voucher-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.g-gest-voucher-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--g-blanco);
+}
+
+.g-gest-voucher-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.g-gest-voucher-badge {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--g-beige);
+  color: var(--g-azul);
+}
+
+.g-gest-voucher small,
+.g-gest-voucher-scope small {
+  display: block;
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.g-gest-voucher-item strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 24px;
+}
+
+.g-gest-voucher-plate {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--g-beige);
+  color: var(--g-texto);
+  font-size: 11px;
+  line-height: 14px;
+}
+
+.g-gest-voucher-scope {
+  padding-top: 16px;
+  border-top: 1px dashed var(--g-borde);
+}
+
+.g-gest-voucher-scope p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  color: var(--g-texto);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.g-gest-voucher-code {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--g-crema);
+}
+
+.g-gest-voucher-code span:last-child:not(:first-child) {
+  text-align: right;
+}
+
+.g-gest-voucher-code strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 20px;
+  letter-spacing: 0.04em;
+}
+
+.g-gest-control {
+  display: flex;
+  gap: 12px;
+  padding: 16px 14px;
+  border-radius: 20px;
+  background: var(--g-azul-claro);
+}
+
+.g-gest-control-icon {
+  width: 32px;
+  height: 32px;
 }
 
 .g-gest-receipt {
@@ -796,4 +1074,95 @@
 
 .g-gest-skeleton-tall {
   height: 190px;
+}
+
+/* Fecha en la tarjeta de cada taller (Figma: "Desde 12 Sep 2023"). */
+.g-aut-card-date {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+/* ---------- Vehículos a autorizar (chips del Figma) ---------- */
+
+.g-aut-vehicles {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.g-aut-vehicles-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.g-aut-vehicles-head small {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.g-aut-chips {
+  display: flex;
+  gap: 8px;
+  margin: 0 -20px;
+  padding: 2px 20px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.g-aut-chip {
+  position: relative;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.g-aut-chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.g-aut-chip > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--g-borde);
+  border-radius: var(--g-radio-pill);
+  background: var(--g-blanco);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.g-aut-chip strong {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.g-aut-chip small {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.g-aut-chip input:checked + span {
+  border-color: var(--g-naranja);
+  background: #fbeee2;
+}
+
+.g-aut-chip input:focus-visible + span {
+  outline: 3px solid rgba(206, 127, 52, 0.3);
+  outline-offset: 2px;
 }

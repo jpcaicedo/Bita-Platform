@@ -4,10 +4,15 @@ import { Suspense } from 'react';
 import { VehicleMissing } from '@/components/gestion/vehicle-missing';
 import {
   ArrowRightIcon,
+  CarIcon,
   CheckIcon,
+  DocumentIcon,
+  LockIcon,
   ShieldIcon,
+  WorkshopIcon,
 } from '@/components/ui/icons';
 import {
+  fechaAutorizacion,
   findAuthorization,
   permissionOf,
   statusOf,
@@ -78,6 +83,9 @@ async function ConfirmationContent({
   const permission = permissionOf(authorization);
   const status = statusOf(authorization);
   const base = `/garaje/${vehicleId}/autorizaciones`;
+  // Código corto y legible a partir del ID de la autorización.
+  const codigo = `AUTH-${authorization.id.slice(0, 4).toUpperCase()}`;
+  const fechaAlta = fechaAutorizacion(authorization.createdAt);
 
   return (
     <section className="g-gest">
@@ -85,51 +93,87 @@ async function ConfirmationContent({
         <span className="g-gest-hero-check" aria-hidden="true">
           <CheckIcon size={36} />
         </span>
-        <h2>Autorización concedida</h2>
+        <span className="g-gest-hero-tag">Sincronización segura activa</span>
+        <h2>¡Autorización concedida con éxito!</h2>
         <p>
-          El taller ya puede trabajar sobre{' '}
-          <strong>{vehicle.data.plate}</strong> con los permisos que definiste.
+          El taller ya puede trabajar con la bitácora de{' '}
+          <strong>{vehicle.data.plate}</strong> bajo las condiciones que
+          definiste.
         </p>
       </section>
 
-      <section className="g-card g-gest-receipt">
-        <div className="g-gest-receipt-head">
-          <strong>Resumen del permiso</strong>
+      <section className="g-card g-gest-voucher">
+        <div className="g-gest-voucher-head">
+          <span className="g-gest-voucher-title">
+            <span className="g-gest-voucher-icon" aria-hidden="true">
+              <DocumentIcon size={15} />
+            </span>
+            Voucher de permiso
+          </span>
           <span className={`g-pill ${status.className}`}>{status.label}</span>
         </div>
 
-        <dl className="g-gest-rows">
-          <div className="g-gest-row">
-            <dt>Taller</dt>
-            <dd>{workshopLabel(authorization)}</dd>
-          </div>
-          <div className="g-gest-row">
-            <dt>Vehículo</dt>
-            <dd>
-              {vehicle.data.brand} {vehicle.data.model} · {vehicle.data.plate}
-            </dd>
-          </div>
-          <div className="g-gest-row">
-            <dt>Permiso</dt>
-            <dd>{permission.label}</dd>
-          </div>
-          <div className="g-gest-row">
-            <dt>Consultar historial</dt>
-            <dd>{authorization.canRead ? 'Sí' : 'No'}</dd>
-          </div>
-          <div className="g-gest-row">
-            <dt>Registrar servicios</dt>
-            <dd>{authorization.canWrite ? 'Sí' : 'No'}</dd>
-          </div>
-        </dl>
+        <div className="g-gest-voucher-item">
+          <span className="g-gest-voucher-badge" aria-hidden="true">
+            <WorkshopIcon size={20} />
+          </span>
+          <span>
+            <small>Taller autorizado</small>
+            <strong>{workshopLabel(authorization)}</strong>
+          </span>
+        </div>
+
+        <div className="g-gest-voucher-item">
+          <span className="g-gest-voucher-badge" aria-hidden="true">
+            <CarIcon size={20} />
+          </span>
+          <span>
+            <small>Vehículo asociado</small>
+            <strong>
+              {vehicle.data.brand} {vehicle.data.model} {vehicle.data.year}
+              <span className="g-gest-voucher-plate">
+                {vehicle.data.plate}
+              </span>
+            </strong>
+          </span>
+        </div>
+
+        <div className="g-gest-voucher-scope">
+          <small>Alcance concedido</small>
+          <p>
+            <span className={`g-pill ${permission.className}`}>
+              {permission.label}
+            </span>
+            {permission.description}.
+          </p>
+        </div>
+
+        <div className="g-gest-voucher-code">
+          {fechaAlta && (
+            <span>
+              <small>Fecha de alta</small>
+              <strong>{fechaAlta}</strong>
+            </span>
+          )}
+          <span>
+            <small>Código</small>
+            <strong>{codigo}</strong>
+          </span>
+        </div>
       </section>
 
-      <article className="g-card g-gest-callout">
-        <strong>Tienes el control total de tus datos</strong>
-        <p>
-          Puedes cambiar el permiso o revocar el acceso cuando quieras. Los
-          servicios que el taller ya registró se conservan intactos.
-        </p>
+      <article className="g-gest-control">
+        <span className="g-gest-control-icon" aria-hidden="true">
+          <LockIcon size={16} />
+        </span>
+        <span>
+          <strong>Control total de tus datos</strong>
+          <p>
+            Puedes cambiar el permiso o revocar el acceso cuando quieras desde
+            Talleres. Los servicios que el taller ya registró se conservan
+            intactos.
+          </p>
+        </span>
       </article>
 
       <div className="g-gest-actions">
@@ -137,7 +181,7 @@ async function ConfirmationContent({
           Ver autorizaciones activas
           <ArrowRightIcon size={18} />
         </Link>
-        <Link href={`${base}/nueva`} className="g-btn g-btn--outline">
+        <Link href="/talleres/otorgar" className="g-btn g-btn--outline">
           Otorgar otra autorización
         </Link>
       </div>

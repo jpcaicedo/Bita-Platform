@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -60,6 +61,12 @@ export class WorkshopAuthorizationEntity {
 
   @Column({ type: 'varchar', length: 20, default: 'active' })
   status!: AuthorizationStatus;
+
+  // Fecha en que se otorgó el acceso ("Desde …" y "Fecha de alta" en el
+  // frontend). Las filas que ya existían toman la fecha en que se agregó la
+  // columna.
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
+  createdAt!: Date;
 
   @OneToMany(() => AuthorizationLogEntity, (log) => log.authorization)
   logs!: AuthorizationLogEntity[];

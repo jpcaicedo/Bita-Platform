@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { UserIcon } from '@/components/ui/icons';
 import { logoutAction } from '@/lib/auth-actions';
@@ -9,7 +10,15 @@ export const metadata: Metadata = {
   title: 'Ajustes',
 };
 
-export default async function AjustesPage() {
+export default function AjustesPage() {
+  return (
+    <Suspense fallback={<div className="g-skeleton g-settings-skeleton" />}>
+      <AjustesContent />
+    </Suspense>
+  );
+}
+
+async function AjustesContent() {
   const session = await requireSession();
   const role = session.isWorkshop ? 'Taller' : 'Dueño';
   const displayName = session.user.username || 'Usuario BITA';

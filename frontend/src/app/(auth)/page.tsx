@@ -48,15 +48,17 @@ function SplashVisual({ autoAdvance = false }: { autoAdvance?: boolean }) {
       )}
 
       <div className="g-splash-brand">
+        <p className="g-splash-hello">Bienvenido a</p>
         <div className="g-splash-logo">
           <Image
             src="/images/logo-bita.svg"
             alt="BITA"
             fill
             priority
-            sizes="300px"
+            sizes="376px"
           />
         </div>
+        <p className="g-splash-by">by ICESI</p>
       </div>
     </main>
   );

@@ -54,3 +54,9 @@
   font-size: 0.75rem;
   color: var(--g-texto-suave);
 }
+
+.g-settings-skeleton {
+  height: 260px;
+  margin-top: 8px;
+  border-radius: 24px;
+}
