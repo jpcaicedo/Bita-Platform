@@ -7,7 +7,7 @@ Consume la API NestJS de este mismo repositorio.
 
 - Node.js 22.x
 - Backend de BITA corriendo en `http://localhost:3000/api`
-  (ver [`README.md`](../README.md) de la raíz)
+  (ver [`backend/README.md`](../backend/README.md))
 - PostgreSQL local con `docker compose up -d` en la raíz del repo
 
 ## Puesta en marcha
