@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { GarageIcon } from '@/components/garaje/garage-icon';
 import {
+  elegirAlerta,
   etiquetaEstado,
   getMyVehicle,
   masUrgente,
@@ -21,7 +22,14 @@ import {
   getMaintenanceTypes,
   getVehicleHealth,
   getVehicleHistory,
+  hoyISO,
 } from '@/lib/taller';
+import {
+  describeReminder,
+  getVehicleReminders,
+  groupReminders,
+  type ReminderItem,
+} from '@/lib/reminders';
 import type { MaintenanceStatusItem } from '@/types/maintenance';
 
 export const metadata: Metadata = {
@@ -58,11 +66,12 @@ async function VehicleDetailContent({
   const { tipo, registrado } = await searchParams;
 
   // Todo en paralelo para que cargue más rápido.
-  const [vehicle, health, history, types] = await Promise.all([
+  const [vehicle, health, history, types, reminders] = await Promise.all([
     getMyVehicle(vehicleId),
     getVehicleHealth(vehicleId),
     getVehicleHistory(vehicleId),
     getMaintenanceTypes(),
+    getVehicleReminders(vehicleId),
   ]);
 
   // 404 = no existe, 403 = es de otro dueño. Ninguno se puede ver.
@@ -87,8 +96,21 @@ async function VehicleDetailContent({
   const auto = vehicle.data;
   const items = health.ok ? (health.data ?? []) : [];
   const registros = history.ok ? (history.data ?? []) : [];
-  const urgente = masUrgente(items);
-  const status = urgente?.status ?? null;
+  const hoy = hoyISO();
+
+  // El recordatorio más urgente (la lista ya viene ordenada: vencidos,
+  // próximos y al día). Los completados no cuentan.
+  const recordatorio =
+    groupReminders(
+      reminders.ok ? (reminders.data ?? []) : [],
+      auto.currentKilometers,
+      hoy,
+    ).active[0] ?? null;
+
+  const alerta = elegirAlerta(masUrgente(items), recordatorio);
+
+  // Con servicios registrados pero sin alertas, el carro está al día.
+  const status = alerta?.status ?? (registros.length > 0 ? 'up_to_date' : null);
 
   // Filtro del historial por tipo (?tipo=<id del tipo>).
   const filtrados = tipo
@@ -169,7 +191,7 @@ async function VehicleDetailContent({
         {/* La alerta lleva a los recordatorios del vehículo (frente C). */}
         <Link
           href={`/garaje/${auto.id}/recordatorios`}
-          className={`g-garage-alert g-garage-alert--${urgente?.status ?? 'up_to_date'}`}
+          className={`g-garage-alert g-garage-alert--${alerta?.status ?? 'up_to_date'}`}
         >
           <span className="g-garage-alert-icon">
             <GarageIcon name="campana" width={16.7} height={16.7} />
@@ -178,23 +200,33 @@ async function VehicleDetailContent({
             <div className="g-garage-alert-title">
               Alerta Preventiva
               <span>
-                {urgente ? etiquetaEstado(urgente.status) : 'Recordatorios'}
+                {alerta ? etiquetaEstado(alerta.status) : 'Recordatorios'}
               </span>
             </div>
             <p className="g-garage-alert-text">
-              {urgente ? (
-                <TextoAlerta item={urgente} km={auto.currentKilometers} />
+              {alerta?.origen === 'mantenimiento' ? (
+                <TextoAlerta item={alerta.item} km={auto.currentKilometers} />
+              ) : alerta?.origen === 'recordatorio' ? (
+                <TextoRecordatorio
+                  item={alerta.item}
+                  km={auto.currentKilometers}
+                  hoy={hoy}
+                />
               ) : (
                 <>
                   Sin alertas por ahora. <b>Crea un recordatorio</b>.
                 </>
               )}
             </p>
-            {urgente && (
-              <div className={`g-garage-bar g-garage-bar--${urgente.status}`}>
+            {alerta && (
+              <div className={`g-garage-bar g-garage-bar--${alerta.status}`}>
                 <span
                   style={{
-                    width: `${progresoServicio(urgente, auto.currentKilometers)}%`,
+                    width: `${
+                      alerta.origen === 'mantenimiento'
+                        ? progresoServicio(alerta.item, auto.currentKilometers)
+                        : progresoRecordatorio(alerta.item)
+                    }%`,
                   }}
                 />
               </div>
@@ -356,6 +388,34 @@ function TextoAlerta({
       .
     </>
   );
+}
+
+// "Recordatorio Frenos: 4,000 km · faltan 700 km."
+function TextoRecordatorio({
+  item,
+  km,
+  hoy,
+}: {
+  item: ReminderItem;
+  km: number;
+  hoy: string;
+}) {
+  const detalle = describeReminder(item.reminder, km, hoy).join(' / ');
+
+  return (
+    <>
+      Recordatorio <b>{item.reminder.title}</b>
+      {detalle && <>: {detalle}</>}.
+    </>
+  );
+}
+
+// Los recordatorios no guardan desde dónde se cuenta, así que la barra
+// va por estado: vencido llena, próximo casi llena, al día a la mitad.
+function progresoRecordatorio(item: ReminderItem): number {
+  if (item.health === 'overdue') return 100;
+  if (item.health === 'upcoming') return 85;
+  return 40;
 }
 
 function DetailSkeleton() {
