@@ -1,7 +1,8 @@
 import type { OwnerVehicle } from '@/types/garaje';
 import type { MaintenanceStatusItem } from '@/types/maintenance';
+import type { SmartReminder } from '@/types/reminder';
 import { bitaFetch, type BitaResponse } from './bita-api';
-import type { ReminderItem } from './reminders';
+import { groupReminders, type ReminderItem } from './reminders';
 import { diasHasta, formatMiles } from './garaje-formato';
 
 /**
@@ -55,6 +56,16 @@ export type AlertaGaraje =
       status: MaintenanceStatusItem['status'];
       item: ReminderItem;
     };
+
+// El recordatorio activo más urgente (groupReminders ya los ordena:
+// vencidos, próximos y al día). Los completados no cuentan.
+export function recordatorioMasUrgente(
+  reminders: SmartReminder[],
+  currentKilometers: number,
+  hoy: string,
+): ReminderItem | null {
+  return groupReminders(reminders, currentKilometers, hoy).active[0] ?? null;
+}
 
 export function elegirAlerta(
   mantenimiento: MaintenanceStatusItem | null,
@@ -124,6 +135,51 @@ export function textoVencimiento(
 ): string {
   const { dueKilometers, dueDate } = item.nextMaintenance;
 
+  return textoMeta(dueKilometers, dueDate, currentKilometers);
+}
+
+// Lo mismo, pero para la alerta (mantenimiento o recordatorio).
+export function textoVencimientoAlerta(
+  alerta: AlertaGaraje,
+  currentKilometers: number,
+): string {
+  if (alerta.origen === 'mantenimiento') {
+    return textoVencimiento(alerta.item, currentKilometers);
+  }
+
+  const { dueKilometers, dueDate } = alerta.item.reminder;
+
+  return textoMeta(dueKilometers, dueDate, currentKilometers);
+}
+
+// Nombre que se muestra: el tipo de mantenimiento o el título del recordatorio.
+export function nombreAlerta(alerta: AlertaGaraje): string {
+  return alerta.origen === 'mantenimiento'
+    ? alerta.item.maintenanceType.name
+    : alerta.item.reminder.title;
+}
+
+// Barra de la alerta. Los recordatorios no guardan desde dónde se cuenta,
+// así que su barra va por estado: vencido llena, próximo casi llena,
+// al día a la mitad.
+export function progresoAlerta(
+  alerta: AlertaGaraje,
+  currentKilometers: number,
+): number {
+  if (alerta.origen === 'mantenimiento') {
+    return progresoServicio(alerta.item, currentKilometers);
+  }
+
+  if (alerta.status === 'overdue') return 100;
+  if (alerta.status === 'upcoming') return 85;
+  return 40;
+}
+
+function textoMeta(
+  dueKilometers: number | null,
+  dueDate: string | null,
+  currentKilometers: number,
+): string {
   if (dueKilometers !== null) {
     const faltan = dueKilometers - currentKilometers;
     return faltan > 0

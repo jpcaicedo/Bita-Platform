@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import {
+  elegirAlerta,
   etiquetaEstado,
   masUrgente,
-  progresoServicio,
-  textoVencimiento,
+  nombreAlerta,
+  progresoAlerta,
+  textoVencimientoAlerta,
 } from '@/lib/garaje';
 import { formatMiles } from '@/lib/garaje-formato';
+import type { ReminderItem } from '@/lib/reminders';
 import type { OwnerVehicle } from '@/types/garaje';
 import type { MaintenanceStatusItem } from '@/types/maintenance';
 import { GarageIcon } from './garage-icon';
@@ -13,6 +16,7 @@ import { GarageIcon } from './garage-icon';
 interface GarageVehicleCardProps {
   vehicle: OwnerVehicle;
   statusItems: MaintenanceStatusItem[];
+  reminder: ReminderItem | null;
 }
 
 // Ícono pequeño de la fila "próximo servicio", según el estado (Figma).
@@ -23,12 +27,15 @@ const ICONO_ESTADO = {
 } as const;
 
 // Tarjeta del garaje con el semáforo (Al día / Próximo / Vencido).
+// Usa lo más urgente entre mantenimientos y recordatorios, igual que la
+// alerta de la ficha del vehículo.
 export function GarageVehicleCard({
   vehicle,
   statusItems,
+  reminder,
 }: GarageVehicleCardProps) {
-  const urgente = masUrgente(statusItems);
-  const status = urgente?.status ?? null;
+  const alerta = elegirAlerta(masUrgente(statusItems), reminder);
+  const status = alerta?.status ?? null;
 
   return (
     <article className="g-garage-card">
@@ -60,22 +67,22 @@ export function GarageVehicleCard({
           </span>
         </div>
 
-        {urgente ? (
+        {alerta ? (
           <>
-            <div className={`g-garage-bar g-garage-bar--${urgente.status}`}>
+            <div className={`g-garage-bar g-garage-bar--${alerta.status}`}>
               <span
                 style={{
-                  width: `${progresoServicio(urgente, vehicle.currentKilometers)}%`,
+                  width: `${progresoAlerta(alerta, vehicle.currentKilometers)}%`,
                 }}
               />
             </div>
-            <div className={`g-garage-next g-garage-next--${urgente.status}`}>
+            <div className={`g-garage-next g-garage-next--${alerta.status}`}>
               <span className="g-garage-next-type">
-                <GarageIcon {...ICONO_ESTADO[urgente.status]} />
-                {urgente.maintenanceType.name}
+                <GarageIcon {...ICONO_ESTADO[alerta.status]} />
+                {nombreAlerta(alerta)}
               </span>
               <span className="g-garage-next-due">
-                {textoVencimiento(urgente, vehicle.currentKilometers)}
+                {textoVencimientoAlerta(alerta, vehicle.currentKilometers)}
               </span>
             </div>
           </>

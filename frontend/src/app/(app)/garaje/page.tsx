@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { GarageIcon } from '@/components/garaje/garage-icon';
 import { GarageVehicleCard } from '@/components/garaje/vehicle-card';
-import { getMyVehicles } from '@/lib/garaje';
+import { getMyVehicles, recordatorioMasUrgente } from '@/lib/garaje';
+import { getVehicleReminders } from '@/lib/reminders';
 import { requireOwner } from '@/lib/session';
-import { getVehicleHealth } from '@/lib/taller';
+import { getVehicleHealth, hoyISO } from '@/lib/taller';
 
 export const metadata: Metadata = {
   title: 'Mi garaje',
@@ -78,10 +79,13 @@ async function GarageContent({
 
   const lista = vehicles.data;
 
-  // El semáforo de todos los vehículos se pide al mismo tiempo.
-  const estados = await Promise.all(
-    lista.map((vehicle) => getVehicleHealth(vehicle.id)),
-  );
+  // El semáforo y los recordatorios de todos los vehículos se piden al
+  // mismo tiempo.
+  const [estados, recordatorios] = await Promise.all([
+    Promise.all(lista.map((vehicle) => getVehicleHealth(vehicle.id))),
+    Promise.all(lista.map((vehicle) => getVehicleReminders(vehicle.id))),
+  ]);
+  const hoy = hoyISO();
 
   return (
     <>
@@ -121,6 +125,13 @@ async function GarageContent({
               key={vehicle.id}
               vehicle={vehicle}
               statusItems={estados[index].ok ? (estados[index].data ?? []) : []}
+              reminder={recordatorioMasUrgente(
+                recordatorios[index].ok
+                  ? (recordatorios[index].data ?? [])
+                  : [],
+                vehicle.currentKilometers,
+                hoy,
+              )}
             />
           ))}
         </div>
