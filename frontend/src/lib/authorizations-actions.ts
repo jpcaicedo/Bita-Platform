@@ -9,10 +9,6 @@ function texto(formData: FormData, key: string): string {
   return String(formData.get(key) ?? '').trim();
 }
 
-function volverAOtorgar(vehicleId: string, error: string): never {
-  redirect(`/garaje/${vehicleId}/autorizaciones/nueva?error=${error}`);
-}
-
 function volverARevocar(
   vehicleId: string,
   authorizationId: string,
@@ -23,43 +19,66 @@ function volverARevocar(
   );
 }
 
+// Autoriza un taller en uno o varios vehículos: el backend recibe una
+// autorización por vehículo, así que se crean una tras otra.
 export async function grantAuthorizationAction(formData: FormData) {
   await requireOwner();
 
-  const vehicleId = texto(formData, 'vehicleId');
-
-  if (!isUuid(vehicleId)) redirect('/garaje');
-
+  const vehicleIds = [
+    ...new Set(formData.getAll('vehicleIds').map((id) => String(id).trim())),
+  ].filter((id) => isUuid(id));
   const workshopId = texto(formData, 'workshopId');
   const permission = texto(formData, 'permission');
 
-  if (!isUuid(workshopId)) volverAOtorgar(vehicleId, 'taller_id');
-  if (permission !== 'read' && permission !== 'write') {
-    volverAOtorgar(vehicleId, 'permisos');
+  const volver = (error: string): never => {
+    const params = new URLSearchParams({ error });
+    if (isUuid(workshopId)) params.set('taller', workshopId);
+    if (vehicleIds.length > 0) params.set('vehiculo', vehicleIds.join(','));
+    redirect(`/talleres/otorgar?${params.toString()}`);
+  };
+
+  if (vehicleIds.length === 0) volver('vehiculos');
+  if (!isUuid(workshopId)) volver('taller_id');
+  if (permission !== 'read' && permission !== 'write') volver('permisos');
+
+  let primera: { vehicleId: string; authorizationId: string } | null = null;
+  let otorgadas = 0;
+
+  for (const vehicleId of vehicleIds) {
+    const result = await grantAuthorization(vehicleId, {
+      workshopId,
+      canRead: true,
+      canWrite: permission === 'write',
+    });
+
+    if (!result.ok || !result.data) {
+      // Si alguna ya quedó guardada, no se repite el formulario completo.
+      if (otorgadas > 0) redirect('/talleres?ok=parcial');
+
+      const message = result.message?.toLowerCase() ?? '';
+
+      if (result.status === 0) volver('conexion');
+      if (result.status === 403) volver('acceso');
+      if (result.status === 404) {
+        volver(message.includes('workshop') ? 'taller_no_existe' : 'vehiculo');
+      }
+      if (result.status === 400 && message.includes('owner')) {
+        volver('propio');
+      }
+      volver('datos');
+    }
+
+    primera ??= { vehicleId, authorizationId: result.data!.id };
+    otorgadas += 1;
   }
 
-  const result = await grantAuthorization(vehicleId, {
-    workshopId,
-    canRead: true,
-    canWrite: permission === 'write',
-  });
-
-  const message = result.message?.toLowerCase() ?? '';
-
-  if (result.status === 0) volverAOtorgar(vehicleId, 'conexion');
-  if (result.status === 403) volverAOtorgar(vehicleId, 'acceso');
-  if (result.status === 404) {
-    volverAOtorgar(
-      vehicleId,
-      message.includes('workshop') ? 'taller_no_existe' : 'vehiculo',
-    );
+  if (otorgadas > 1 || !primera) {
+    redirect(`/talleres?ok=otorgadas&n=${otorgadas}`);
   }
-  if (result.status === 400 && message.includes('owner')) {
-    volverAOtorgar(vehicleId, 'propio');
-  }
-  if (!result.ok || !result.data) volverAOtorgar(vehicleId, 'datos');
 
-  redirect(`/garaje/${vehicleId}/autorizaciones/${result.data.id}/confirmacion`);
+  redirect(
+    `/garaje/${primera.vehicleId}/autorizaciones/${primera.authorizationId}/confirmacion`,
+  );
 }
 
 export async function revokeAuthorizationAction(formData: FormData) {

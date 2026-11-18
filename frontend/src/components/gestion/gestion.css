@@ -693,9 +693,16 @@
 }
 
 .g-gest-voucher-code {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 12px;
   padding: 8px 12px;
   border-radius: 14px;
   background: var(--g-crema);
+}
+
+.g-gest-voucher-code span:last-child:not(:first-child) {
+  text-align: right;
 }
 
 .g-gest-voucher-code strong {
@@ -1067,4 +1074,95 @@
 
 .g-gest-skeleton-tall {
   height: 190px;
+}
+
+/* Fecha en la tarjeta de cada taller (Figma: "Desde 12 Sep 2023"). */
+.g-aut-card-date {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+/* ---------- Vehículos a autorizar (chips del Figma) ---------- */
+
+.g-aut-vehicles {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.g-aut-vehicles-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.g-aut-vehicles-head small {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.g-aut-chips {
+  display: flex;
+  gap: 8px;
+  margin: 0 -20px;
+  padding: 2px 20px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.g-aut-chip {
+  position: relative;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.g-aut-chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.g-aut-chip > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--g-borde);
+  border-radius: var(--g-radio-pill);
+  background: var(--g-blanco);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.g-aut-chip strong {
+  color: var(--g-azul);
+  font-family: var(--g-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.g-aut-chip small {
+  color: var(--g-texto-suave);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.g-aut-chip input:checked + span {
+  border-color: var(--g-naranja);
+  background: #fbeee2;
+}
+
+.g-aut-chip input:focus-visible + span {
+  outline: 3px solid rgba(206, 127, 52, 0.3);
+  outline-offset: 2px;
 }

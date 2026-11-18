@@ -153,6 +153,7 @@ export class AuthorizationsService {
     const authorizations = await this.authorizationsRepository.find({
       where: { vehicleId },
       relations: { workshop: { workshopProfile: true } },
+      order: { createdAt: 'DESC' },
     });
 
     // `workshop` es un usuario: no lo devolvemos completo, solo el nombre
