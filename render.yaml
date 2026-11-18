@@ -9,6 +9,8 @@ services:
     region: oregon
     branch: main
     autoDeploy: true
+    # El backend vive en la carpeta backend/ del repo (el frontend en frontend/).
+    rootDir: backend
     # --include=dev es obligatorio: con NODE_ENV=production npm omite
     # devDependencies y `nest build` no existiría.
     buildCommand: npm ci --include=dev && npm run build

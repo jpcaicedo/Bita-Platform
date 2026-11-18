@@ -73,7 +73,8 @@ La base ya tiene las 9 tablas creadas por TypeORM (`DB_SYNC=true`).
 
 4. Aplica el blueprint y espera el primer build (`npm ci && npm run build`).
 
-> Si prefieres crearlo a mano: **New → Web Service**, runtime Node, build
+> Si prefieres crearlo a mano: **New → Web Service**, runtime Node,
+> **Root Directory `backend`**, build
 > `npm ci --include=dev && npm run build`, start `npm run start:prod`, health
 > check `/api/health`, y agrega las mismas variables de entorno.
 
