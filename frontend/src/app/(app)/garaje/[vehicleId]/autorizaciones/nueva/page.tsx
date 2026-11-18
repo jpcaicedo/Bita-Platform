@@ -32,7 +32,8 @@ const ERRORES: Record<string, string> = {
   vehiculo: 'No encontramos el vehículo.',
   acceso: 'Solo el dueño del vehículo puede otorgar accesos.',
   conexion: 'No pudimos conectar con el servidor. Inténtalo otra vez.',
-  datos: 'El servidor rechazó la autorización. Revisa los datos e inténtalo de nuevo.',
+  datos:
+    'El servidor rechazó la autorización. Revisa los datos e inténtalo de nuevo.',
 };
 
 export default function NuevaAutorizacionPage({
@@ -73,9 +74,14 @@ async function GrantContent({
   return (
     <section className="g-gest">
       <header className="g-gest-head">
+        <p className="g-gest-eyebrow">
+          <span className="g-gest-step">Paso 1 de 2</span>
+          Configurar acceso
+        </p>
         <h2>Otorgar acceso a taller</h2>
         <p>
-          Elige el taller y define qué podrá hacer sobre este vehículo.
+          Selecciona el taller mecánico y define qué permisos tendrá sobre tu
+          vehículo en la bitácora.
         </p>
       </header>
 
