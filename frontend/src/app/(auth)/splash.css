@@ -1,24 +1,49 @@
+/* Figma "Bita" (marco de 393): "Bienvenido a" en y = 227, el logo de
+   376 × 125 en y = 271 y "by ICESI" en y = 427. */
 .g-splash {
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 100dvh;
-  padding: 32px;
+  padding: 227px 8px 32px;
   background: var(--g-crema);
 }
 
 .g-splash-brand {
-  display: grid;
-  place-items: center;
-  animation: g-splash-in 0.45s ease both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* Entra y, a los 2 s, se desvanece antes de navegar. */
+  animation:
+    g-splash-in 0.45s ease both,
+    g-splash-out 1s ease 2s forwards;
+}
+
+.g-splash-hello,
+.g-splash-by {
+  margin: 0;
+  font-family: var(--g-font-display);
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--g-azul);
+}
+
+.g-splash-hello {
+  font-size: 35px;
+  line-height: 40px;
 }
 
 .g-splash-logo {
   position: relative;
-  width: min(72vw, 300px);
-  /* Proporción real del logo (viewBox recortado): así el centrado es exacto. */
-  aspect-ratio: 282.4 / 91.1;
-  /* El logo se ve 2 s y luego se desvanece antes de navegar. */
-  animation: g-splash-out 1s ease 2s forwards;
+  width: min(376px, 100%);
+  height: 125px;
+  margin-top: 4px;
+}
+
+.g-splash-by {
+  margin-top: 31px;
+  line-height: 54px;
 }
 
 .g-splash-logo img {
@@ -45,8 +70,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .g-splash-brand,
-  .g-splash-logo {
+  .g-splash-brand {
     animation: none;
   }
 }

@@ -9,27 +9,28 @@
 
 .g-auth-logo {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 30px;
+  left: 22px;
   z-index: 5;
-  width: 46px;
-  height: 46px;
+  width: 73px;
+  height: 73px;
 }
 
 .g-auth-logo img {
   object-fit: contain;
 }
 
+/* Login (Figma "Log in", marco de 393): el auto mide 314 × 137 y empieza
+   en y = 93; el panel beige empieza en y = 246. */
 .g-auth-hero {
   position: relative;
-  width: 100%;
-  height: 232px;
-  margin-top: 30px;
+  width: 314px;
+  max-width: 100%;
+  height: 137px;
+  margin: 93px auto 0;
 }
 
 .g-auth-hero img {
-  left: 19%;
-  width: 62%;
   object-fit: contain;
 }
 
@@ -39,17 +40,19 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-top: -30px;
-  padding: 28px 22px 38px;
+  margin-top: 16px;
+  padding: 36px 25px 38px;
   border-radius: 36px 36px 0 0;
   background: var(--g-beige);
 }
 
 .g-auth-title {
-  margin-bottom: 20px;
-  font-size: clamp(1.7rem, 7.5vw, 2rem);
+  max-width: 286px;
+  margin: 0 auto 27px;
+  font-size: 32px;
   font-weight: 800;
-  text-align: left;
+  line-height: 37px;
+  text-align: center;
 }
 
 .g-auth-form {
@@ -59,11 +62,12 @@
 
 .g-input-wrap {
   position: relative;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .g-input-wrap .g-input {
-  padding-left: 50px;
+  min-height: 56px;
+  padding-left: 48px;
 }
 
 .g-input-icon {
@@ -79,7 +83,8 @@
 }
 
 .g-forgot {
-  margin: 0 0 18px;
+  margin: 11px 0 33px;
+  line-height: 24px;
   text-align: center;
   font-size: 0.78rem;
   color: var(--g-texto-suave);
@@ -94,7 +99,7 @@
 
 .g-btn--google {
   width: 100%;
-  margin-top: 12px;
+  margin-top: 20px;
   border: 1.5px solid var(--g-borde);
   background: #f8f2e3;
   color: var(--g-texto);
@@ -124,7 +129,8 @@
 }
 
 .g-auth-foot {
-  margin-top: 22px;
+  margin-top: 52px;
+  line-height: 24px;
   text-align: center;
   font-size: 0.82rem;
   color: var(--g-texto-suave);
@@ -138,7 +144,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 18px 0 4px;
+  margin: 13px 0 0;
+  line-height: 24px;
   color: var(--g-texto-suave);
   font-size: 0.75rem;
 }
@@ -151,44 +158,69 @@
   background: #ddd5c2;
 }
 
-/* Registro */
+/* Registro (Figma "Sign Up", marco de 393): la ilustración mide 361 × 241
+   desde y = -4 y el panel beige empieza en y = 166, encima de ella. */
 .g-signup {
   background: var(--g-crema);
 }
 
-.g-signup-hero {
-  height: 190px;
-  margin-top: 62px;
+.g-signup .g-auth-logo {
+  top: 27px;
+  left: 23px;
+  width: 55px;
+  height: 55px;
 }
 
-.g-signup-hero img {
-  left: 15%;
-  width: 70%;
+.g-signup-hero {
+  width: 361px;
+  height: 241px;
+  margin-top: -4px;
 }
 
 .g-signup-panel {
-  margin-top: -58px;
-  padding-top: 30px;
+  margin-top: -71px;
+  padding-top: 57px;
 }
 
+.g-signup-panel .g-auth-title {
+  margin-bottom: 40px;
+}
+
+.g-signup-panel .g-btn--google {
+  margin-top: 12px;
+}
+
+.g-signup-panel .g-auth-foot {
+  margin-top: 25px;
+}
+
+/* El Figma no trae esta ayuda: se ubica en el espacio de 16 px entre los
+   campos para no mover nada de su sitio. */
 .g-password-help {
-  margin: -6px 0 12px 18px;
+  height: 16px;
+  margin: -16px 0 0 18px;
+  overflow: hidden;
+  font-size: 0.66rem;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .g-account {
-  margin: 4px 0 18px;
+  margin: 5px 0 40px;
   padding: 0;
   border: 0;
 }
 
 .g-account legend {
-  margin-bottom: 9px;
+  margin: 0 0 16px 16px;
+  line-height: 25px;
 }
 
 .g-account-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .g-account-option {
@@ -207,7 +239,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 46px;
+  min-height: 52px;
   border: 1.5px solid var(--g-borde);
   border-radius: var(--g-radio-pill);
   background: var(--g-blanco);
@@ -232,4 +264,3 @@
   outline: 3px solid rgba(206, 127, 52, 0.3);
   outline-offset: 2px;
 }
-
