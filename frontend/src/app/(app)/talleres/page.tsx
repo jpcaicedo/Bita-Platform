@@ -24,6 +24,12 @@ export const metadata: Metadata = {
 
 type Filtro = 'activas' | 'revocadas' | 'todas';
 
+interface TalleresParams {
+  filtro?: string;
+  ok?: string;
+  n?: string;
+}
+
 const FILTROS: { value: Filtro; label: string }[] = [
   { value: 'activas', label: 'Activas' },
   { value: 'revocadas', label: 'Revocadas' },
@@ -32,7 +38,7 @@ const FILTROS: { value: Filtro; label: string }[] = [
 export default function TalleresPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filtro?: string }>;
+  searchParams: Promise<TalleresParams>;
 }) {
   return (
     <Suspense fallback={<WorkshopsSkeleton />}>
@@ -44,7 +50,7 @@ export default function TalleresPage({
 async function WorkshopsContent({
   searchParams,
 }: {
-  searchParams: Promise<{ filtro?: string }>;
+  searchParams: Promise<TalleresParams>;
 }) {
   const query = await searchParams;
   await requireOwner();
@@ -112,6 +118,21 @@ async function WorkshopsContent({
           </span>
         </span>
       </aside>
+
+      {query.ok === 'otorgadas' && (
+        <div className="g-alert g-alert--ok" role="status">
+          Listo: el taller quedó autorizado en{' '}
+          {Number(query.n) > 1 ? `${Number(query.n)} vehículos` : 'tu vehículo'}
+          .
+        </div>
+      )}
+
+      {query.ok === 'parcial' && (
+        <div className="g-alert g-alert--error" role="alert">
+          El taller quedó autorizado solo en algunos vehículos. Revisa la lista
+          y vuelve a intentarlo con los que faltan.
+        </div>
+      )}
 
       {someFailed && (
         <div className="g-alert g-alert--error" role="alert">
@@ -214,12 +235,6 @@ async function WorkshopsContent({
 
               <div className="g-gest-actions">
                 <Link
-                  href={`/garaje/${entry.vehicle.id}/autorizaciones/nueva`}
-                  className="g-btn g-btn--soft"
-                >
-                  Otorgar acceso
-                </Link>
-                <Link
                   href={`/garaje/${entry.vehicle.id}/autorizaciones`}
                   className="g-gest-link"
                 >
@@ -229,6 +244,13 @@ async function WorkshopsContent({
             </section>
           );
         })
+      )}
+
+      {entries.length > 0 && (
+        <Link href="/talleres/otorgar" className="g-btn g-btn--primary">
+          <PlusIcon size={18} />
+          Otorgar nueva autorización
+        </Link>
       )}
     </section>
   );

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronRightIcon, TrashIcon, WorkshopIcon } from '@/components/ui/icons';
 import {
+  fechaAutorizacion,
   permissionOf,
   statusOf,
   workshopLabel,
@@ -15,6 +16,7 @@ export function AuthorizationCard({
   const permission = permissionOf(authorization);
   const status = statusOf(authorization);
   const isActive = authorization.status === 'active';
+  const desde = fechaAutorizacion(authorization.createdAt);
   const base = `/garaje/${authorization.vehicleId}/autorizaciones`;
 
   return (
@@ -32,6 +34,7 @@ export function AuthorizationCard({
         <span className="g-aut-card-info">
           <strong>{workshopLabel(authorization)}</strong>
           <span>{permission.description}</span>
+          {desde && <span className="g-aut-card-date">Desde {desde}</span>}
         </span>
         <span className={`g-pill ${status.className}`}>{status.label}</span>
       </div>
@@ -51,7 +54,7 @@ export function AuthorizationCard({
               Revocar
             </Link>
             <Link
-              href={`${base}/nueva?taller=${authorization.workshopId}`}
+              href={`/talleres/otorgar?taller=${authorization.workshopId}&vehiculo=${authorization.vehicleId}`}
               className="g-gest-link"
             >
               Cambiar permiso

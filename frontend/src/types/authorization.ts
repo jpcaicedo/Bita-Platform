@@ -11,4 +11,6 @@ export interface WorkshopAuthorization {
   // Nombre del taller según su perfil. Puede faltar si el taller aún no lo
   // completó; en ese caso el frontend muestra un label derivado del ID.
   workshopName: string | null;
+  // Fecha ISO en que se otorgó el acceso.
+  createdAt: string;
 }

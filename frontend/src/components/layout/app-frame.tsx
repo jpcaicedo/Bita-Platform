@@ -41,6 +41,9 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Perfil del Taller', back: '/taller' };
   }
   // "/talleres" (dueño) también empieza por "/taller": va primero.
+  if (pathname.startsWith('/talleres/otorgar')) {
+    return { title: 'Otorgar Acceso', back: '/talleres' };
+  }
   if (pathname.startsWith('/talleres')) return { title: 'Talleres' };
   if (pathname.startsWith('/taller')) return { title: 'Vehículos' };
 

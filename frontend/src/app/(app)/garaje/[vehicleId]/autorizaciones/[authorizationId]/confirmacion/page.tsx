@@ -12,6 +12,7 @@ import {
   WorkshopIcon,
 } from '@/components/ui/icons';
 import {
+  fechaAutorizacion,
   findAuthorization,
   permissionOf,
   statusOf,
@@ -84,6 +85,7 @@ async function ConfirmationContent({
   const base = `/garaje/${vehicleId}/autorizaciones`;
   // Código corto y legible a partir del ID de la autorización.
   const codigo = `AUTH-${authorization.id.slice(0, 4).toUpperCase()}`;
+  const fechaAlta = fechaAutorizacion(authorization.createdAt);
 
   return (
     <section className="g-gest">
@@ -147,8 +149,16 @@ async function ConfirmationContent({
         </div>
 
         <div className="g-gest-voucher-code">
-          <small>Código de la autorización</small>
-          <strong>{codigo}</strong>
+          {fechaAlta && (
+            <span>
+              <small>Fecha de alta</small>
+              <strong>{fechaAlta}</strong>
+            </span>
+          )}
+          <span>
+            <small>Código</small>
+            <strong>{codigo}</strong>
+          </span>
         </div>
       </section>
 
@@ -171,7 +181,7 @@ async function ConfirmationContent({
           Ver autorizaciones activas
           <ArrowRightIcon size={18} />
         </Link>
-        <Link href={`${base}/nueva`} className="g-btn g-btn--outline">
+        <Link href="/talleres/otorgar" className="g-btn g-btn--outline">
           Otorgar otra autorización
         </Link>
       </div>

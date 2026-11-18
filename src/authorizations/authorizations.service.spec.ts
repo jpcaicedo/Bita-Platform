@@ -213,6 +213,7 @@ describe('AuthorizationsService', () => {
     expect(authorizationsRepositoryMock.find).toHaveBeenCalledWith({
       where: { vehicleId: 'vehicle-1' },
       relations: { workshop: { workshopProfile: true } },
+      order: { createdAt: 'DESC' },
     });
   });
 
