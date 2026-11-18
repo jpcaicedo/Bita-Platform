@@ -1,3 +1,6 @@
+// Solo servidor: aquí se lee la cookie con el token (igual que coffee-api.ts
+// del profe). Si un componente de cliente lo importa, el build falla.
+import 'server-only';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
