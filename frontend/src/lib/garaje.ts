@@ -1,6 +1,7 @@
 import type { OwnerVehicle } from '@/types/garaje';
 import type { MaintenanceStatusItem } from '@/types/maintenance';
 import { bitaFetch, type BitaResponse } from './bita-api';
+import type { ReminderItem } from './reminders';
 import { diasHasta, formatMiles } from './garaje-formato';
 
 /**
@@ -38,6 +39,54 @@ export function masUrgente(
   if (items.length === 0) return null;
 
   return [...items].sort((a, b) => PESO[b.status] - PESO[a.status])[0];
+}
+
+// La alerta preventiva sale de lo más urgente entre los mantenimientos
+// (estado por tipo) y los recordatorios del dueño. Así un recordatorio
+// próximo o vencido aparece en la ficha sin tener que entrar a buscarlo.
+export type AlertaGaraje =
+  | {
+      origen: 'mantenimiento';
+      status: MaintenanceStatusItem['status'];
+      item: MaintenanceStatusItem;
+    }
+  | {
+      origen: 'recordatorio';
+      status: MaintenanceStatusItem['status'];
+      item: ReminderItem;
+    };
+
+export function elegirAlerta(
+  mantenimiento: MaintenanceStatusItem | null,
+  recordatorio: ReminderItem | null,
+): AlertaGaraje | null {
+  const deMantenimiento: AlertaGaraje | null = mantenimiento
+    ? {
+        origen: 'mantenimiento',
+        status: mantenimiento.status,
+        item: mantenimiento,
+      }
+    : null;
+
+  const deRecordatorio: AlertaGaraje | null = recordatorio
+    ? {
+        origen: 'recordatorio',
+        status:
+          recordatorio.health === 'overdue' ||
+          recordatorio.health === 'upcoming'
+            ? recordatorio.health
+            : 'up_to_date',
+        item: recordatorio,
+      }
+    : null;
+
+  if (!deRecordatorio) return deMantenimiento;
+  if (!deMantenimiento) return deRecordatorio;
+
+  // Si empatan, gana el mantenimiento (trae km y fecha calculados).
+  return PESO[deRecordatorio.status] > PESO[deMantenimiento.status]
+    ? deRecordatorio
+    : deMantenimiento;
 }
 
 export function etiquetaEstado(
