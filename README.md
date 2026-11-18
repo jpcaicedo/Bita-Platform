@@ -10,7 +10,6 @@ El repositorio tiene dos proyectos hermanos, cada uno con sus dependencias y su 
 Bita-Platform/
 ├── backend/      API en NestJS + TypeORM (PostgreSQL), desplegada en Render
 ├── frontend/     App móvil en Next.js 16 (se corre en local)
-├── design-ref/   Recursos del diseño (Figma)
 ├── compose.yaml  PostgreSQL local con Docker
 └── render.yaml   Blueprint de Render (usa rootDir: backend)
 ```
