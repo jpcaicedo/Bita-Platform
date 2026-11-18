@@ -19,13 +19,15 @@ Bita-Platform/
 - Detalle del backend: [`backend/README.md`](./backend/README.md) y [`backend/DEPLOY.md`](./backend/DEPLOY.md)
 - Detalle del frontend: [`frontend/README.md`](./frontend/README.md)
 
-## Equipo
+## Módulos
 
-| Frente | Integrante | Pantallas |
+| Módulo | Rol | Pantallas |
 |---|---|---|
-| A. Acceso y taller | Luis | Onboarding, registro, login, perfil del taller, recepción por placa, registro técnico |
-| B. Garaje y mantenimientos | Santiago | Garaje, agregar vehículo, ficha, historial, registrar mantenimiento |
-| C. Recordatorios y autorizaciones | Correa | Recordatorios, autorizar y revocar talleres |
+| Acceso | Todos | Onboarding, registro, login |
+| Garaje y mantenimientos | Dueño | Garaje con estado por color, agregar vehículo, ficha, historial con filtros, registrar mantenimiento |
+| Recordatorios | Dueño | Lista por vehículo, crear y completar recordatorios |
+| Autorizaciones | Dueño | Talleres autorizados, otorgar acceso a uno o varios vehículos, revocar |
+| Taller | Taller | Perfil, recepción por placa, historial del vehículo, registro técnico del servicio |
 
 ## Puesta en marcha local
 
