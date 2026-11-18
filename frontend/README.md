@@ -143,7 +143,7 @@ src/
 - **Sin dependencias nuevas.** Los íconos son SVG propios y el CSS es plano con
   prefijo `g-`.
 - **Diseño móvil de 430 px.** Las ilustraciones de `public/images/` son los SVG
-  originales de `design-ref/` (`Car-1.svg` a `Car-4.svg`), con sus decoraciones
+  originales de `assets/` (exportados del Figma) (`Car-1.svg` a `Car-4.svg`), con sus decoraciones
   y escalables sin pérdida de calidad. Los logos también son SVG; al del splash
   se le recortó el `viewBox` a su contenido para que quede centrado.
 
