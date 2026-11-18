@@ -1,21 +1,31 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import {
   ArrowRightIcon,
+  BellIcon,
   CarIcon,
-  CheckIcon,
+  DocumentIcon,
   SearchIcon,
   ShieldIcon,
+  WorkshopIcon,
 } from '@/components/ui/icons';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { VehicleCard } from '@/components/taller/vehicle-card';
 import type { BitaResponse } from '@/lib/bita-api';
+import { etiquetaEstado, masUrgente } from '@/lib/garaje';
+import { diasDesde, diasHasta } from '@/lib/garaje-formato';
 import {
-  formatKilometros,
   getAuthorizedVehicles,
+  getVehicleHealth,
+  getVehicleHistory,
+  leerPlacasRecientes,
+  PLACAS_RECIENTES_COOKIE,
   searchVehicleByPlate,
 } from '@/lib/taller';
+import { searchPlateAction } from '@/lib/taller-actions';
+import type { MaintenanceStatusItem } from '@/types/maintenance';
 import type { WorkshopPlateResult } from '@/types/workshop';
 
 export const metadata: Metadata = {
@@ -46,54 +56,74 @@ async function ReceptionContent({
 }) {
   const params = await searchParams;
   const plate = params.placa?.trim() ?? '';
-  const [vehicles, result] = await Promise.all([
+  const [vehicles, result, cookieStore] = await Promise.all([
     getAuthorizedVehicles(),
     plate ? searchVehicleByPlate(plate) : Promise.resolve(null),
+    cookies(),
   ]);
+  const recientes = leerPlacasRecientes(
+    cookieStore.get(PLACAS_RECIENTES_COOKIE)?.value,
+  );
 
   return (
     <>
-      <header className="g-taller-head">
-        <h2>Recepción de vehículos</h2>
+      <header className="g-taller-head g-recep-head">
+        <span className="g-recep-role">
+          <WorkshopIcon size={13} />
+          Rol taller • Recepción técnica
+        </span>
+        <h2>Buscar vehículo</h2>
         <p>
-          Busca por placa para confirmar la autorización del dueño antes de
-          registrar un servicio.
+          Ingresa la placa para verificar la autorización del cliente e iniciar
+          el registro del servicio en su bitácora.
         </p>
       </header>
 
-      <section className="g-card g-plate-card">
-        <div className="g-plate-card-head">
-          <span className="g-plate-icon" aria-hidden="true">
-            <SearchIcon size={22} />
-          </span>
-          <div>
-            <h3>Buscar vehículo</h3>
-            <p>Ingresa la placa tal como aparece en el vehículo.</p>
+      <section className="g-card g-recep-search">
+        <form action={searchPlateAction}>
+          <div className="g-recep-label">
+            <label htmlFor="plate">Matrícula o Placa del Vehículo</label>
+            <span>Obligatorio</span>
           </div>
-        </div>
 
-        <form action="/taller" method="get" className="g-plate-form">
-          <label htmlFor="plate" className="g-sr-only">
-            Placa del vehículo
-          </label>
-          <div className="g-plate-row">
-            <input
-              id="plate"
-              className="g-input"
-              type="text"
-              name="placa"
-              defaultValue={plate}
-              placeholder="ABC-123"
-              maxLength={10}
-              autoComplete="off"
-              required
-            />
-            <SubmitButton pendingText="…">
-              <SearchIcon size={20} />
-              <span className="g-sr-only">Buscar</span>
+          <div className="g-recep-row">
+            <span className="g-recep-field">
+              <span className="g-recep-field-icon" aria-hidden="true">
+                <CarIcon size={16} />
+              </span>
+              <input
+                id="plate"
+                type="text"
+                name="placa"
+                defaultValue={plate}
+                placeholder="ABC-123"
+                maxLength={10}
+                autoComplete="off"
+                spellCheck={false}
+                required
+              />
+            </span>
+            <SubmitButton pendingText="Buscando…">
+              <SearchIcon size={16} />
+              Buscar
             </SubmitButton>
           </div>
         </form>
+
+        {recientes.length > 0 && (
+          <div className="g-recep-recent">
+            <span>Búsquedas recientes:</span>
+            {recientes.map((item) => (
+              <Link
+                key={item}
+                href={`/taller?placa=${encodeURIComponent(item)}`}
+                className="g-recep-chip"
+              >
+                {item}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {params.error === 'datos' && (
           <p className="g-alert g-alert--error g-plate-error" role="alert">
@@ -146,7 +176,7 @@ async function ReceptionContent({
   );
 }
 
-function PlateResult({
+async function PlateResult({
   result,
   plate,
 }: {
@@ -253,63 +283,178 @@ function PlateResult({
     );
   }
 
+  // Con permiso de lectura se muestran el historial y el estado del
+  // vehículo, como en la tarjeta de resultado del Figma ("Taller - Main").
+  const [history, health] = await Promise.all([
+    getVehicleHistory(vehicle.id),
+    getVehicleHealth(vehicle.id),
+  ]);
+  const records = history.ok ? (history.data ?? []) : [];
+  const ultimo = records.reduce<string | null>(
+    (max, record) =>
+      max === null || record.serviceDate > max ? record.serviceDate : max,
+    null,
+  );
+  const inversion = records.reduce(
+    (total, record) => total + (record.cost ?? 0),
+    0,
+  );
+  const urgente = health.ok ? masUrgente(health.data ?? []) : null;
+  const km = vehicle.currentKilometers ?? 0;
+
   return (
-    <section className="g-card g-state-card">
-      <span className="g-state-icon" aria-hidden="true">
-        <CheckIcon size={26} />
-      </span>
-      <h3>Vehículo autorizado</h3>
-
-      <div className="g-vehicle-strip">
-        <span className="g-vehicle-plate">{vehicle.plate}</span>
-        <span className="g-vehicle-strip-info">
-          <strong>
-            {vehicle.brand} {vehicle.model}
-          </strong>
-          <span>
-            {vehicle.year ?? 'Año no registrado'} ·{' '}
-            {formatKilometros(vehicle.currentKilometers)}
+    <>
+      <section className="g-card g-recep-result">
+        <div className="g-recep-result-head">
+          <span className="g-recep-car" aria-hidden="true">
+            <CarIcon size={24} />
           </span>
-        </span>
-      </div>
+          <span className="g-recep-result-info">
+            <strong>
+              {vehicle.brand} {vehicle.model}
+            </strong>
+            <small>
+              Placa {vehicle.plate}
+              {vehicle.year ? ` · ${vehicle.year}` : ''}
+            </small>
+          </span>
+          <span className="g-pill g-pill--green">Autorizado</span>
+        </div>
 
-      <div className="g-pills-row">
-        <span className="g-pill g-pill--green">
-          <CheckIcon size={13} /> Lectura
-        </span>
-        <span
-          className={`g-pill ${
-            authorization.canWrite ? 'g-pill--green' : 'g-pill--lilac'
-          }`}
-        >
-          <ShieldIcon size={13} />
-          {authorization.canWrite ? 'Escritura' : 'Solo lectura'}
-        </span>
-      </div>
+        <div className="g-recep-photo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/garaje/foto-carro.png" alt="" />
+          <span>
+            <ShieldIcon size={12} />
+            Bitácora activa
+          </span>
+        </div>
 
-      <div className="g-state-actions">
+        <div className="g-recep-permission">
+          <span className="g-recep-permission-icon" aria-hidden="true">
+            <ShieldIcon size={15} />
+          </span>
+          <span>
+            <small>Permiso del dueño</small>
+            <strong>Vigente</strong>
+          </span>
+          <span
+            className={`g-pill ${
+              authorization.canWrite ? 'g-pill--green' : 'g-pill--lilac'
+            }`}
+          >
+            {authorization.canWrite ? 'Lectura + Escritura' : 'Solo lectura'}
+          </span>
+        </div>
+
+        <dl className="g-recep-stats">
+          <div>
+            <dt>Odómetro</dt>
+            <dd>{new Intl.NumberFormat('en-US').format(km)}</dd>
+            <dd>km totales</dd>
+          </div>
+          <div>
+            <dt>Último serv.</dt>
+            <dd>{ultimo ? `${diasDesde(ultimo)} días` : '—'}</dd>
+            <dd>{ultimo ? 'desde el último' : 'sin registros'}</dd>
+          </div>
+          <div>
+            <dt>Inversión</dt>
+            <dd>
+              {new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                maximumFractionDigits: 0,
+              }).format(inversion)}
+            </dd>
+            <dd>acumulado</dd>
+          </div>
+        </dl>
+
+        <div className="g-recep-alert">
+          <span className="g-recep-alert-icon" aria-hidden="true">
+            <BellIcon size={15} />
+          </span>
+          <span>
+            <span className="g-recep-alert-title">
+              Alerta preventiva
+              <span>{etiquetaEstado(urgente?.status ?? null)}</span>
+            </span>
+            <p>
+              {urgente
+                ? textoAlerta(urgente, km)
+                : 'Este vehículo aún no tiene mantenimientos con próxima fecha.'}
+            </p>
+          </span>
+        </div>
+
         {authorization.canWrite ? (
           <Link
             href={`/taller/registrar/${vehicle.id}`}
-            className="g-btn g-btn--primary"
+            className="g-recep-cta"
           >
-            Registrar servicio
-            <ArrowRightIcon size={18} />
+            Continuar a registrar servicio
+            <span aria-hidden="true">
+              <ArrowRightIcon size={18} />
+            </span>
           </Link>
         ) : (
-          <p className="g-help">
+          <p className="g-help g-recep-readonly">
             El dueño no autorizó registrar servicios con este taller.
           </p>
         )}
+
         <Link
           href={`/taller/vehiculos/${vehicle.id}`}
-          className="g-btn g-btn--outline"
+          className="g-taller-link g-recep-history"
         >
-          Ver historial
+          Ver historial completo
+          <ArrowRightIcon size={15} />
         </Link>
-      </div>
-    </section>
+      </section>
+
+      <aside className="g-recep-note">
+        <span aria-hidden="true">
+          <DocumentIcon size={16} />
+        </span>
+        <p>
+          Al registrar el servicio, quedará guardado en la bitácora del dueño
+          con el nombre de tu taller.
+        </p>
+      </aside>
+    </>
   );
+}
+
+// "Próximo cambio de aceite en 1,750 km o 45 días."
+function textoAlerta(item: MaintenanceStatusItem, km: number): string {
+  const { dueKilometers, dueDate } = item.nextMaintenance;
+  const nombre = item.maintenanceType.name;
+  const kmRestantes = dueKilometers !== null ? dueKilometers - km : null;
+  const dias = dueDate !== null ? diasHasta(dueDate) : null;
+  const miles = (valor: number) =>
+    new Intl.NumberFormat('en-US').format(valor);
+
+  if (item.status === 'overdue') {
+    const partes: string[] = [];
+    if (kmRestantes !== null && kmRestantes <= 0) {
+      partes.push(`${miles(-kmRestantes)} km`);
+    }
+    if (dias !== null && dias < 0) partes.push(`${-dias} días`);
+    return partes.length > 0
+      ? `${nombre} vencido hace ${partes.join(' o ')}.`
+      : `${nombre} vencido.`;
+  }
+
+  const partes: string[] = [];
+  if (kmRestantes !== null && kmRestantes > 0) {
+    partes.push(`${miles(kmRestantes)} km`);
+  }
+  if (dias !== null && dias > 0) partes.push(`${dias} días`);
+
+  return partes.length > 0
+    ? `Próximo ${nombre.toLowerCase()} en ${partes.join(' o ')}.`
+    : `Próximo ${nombre.toLowerCase()} pronto.`;
 }
 
 function ReceptionSkeleton() {

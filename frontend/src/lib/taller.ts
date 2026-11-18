@@ -164,3 +164,23 @@ export function detalleVencimiento(item: MaintenanceStatusItem): string {
 
   return partes.length > 0 ? partes.join(' · ') : 'Sin próxima fecha';
 }
+
+// "Búsquedas recientes" de la recepción: las últimas placas que buscó el
+// taller. Viven en una cookie de su navegador, no en el backend.
+export const PLACAS_RECIENTES_COOKIE = 'bita_placas_recientes';
+export const MAX_PLACAS_RECIENTES = 3;
+
+export function leerPlacasRecientes(valor: string | undefined): string[] {
+  try {
+    const guardadas: unknown = JSON.parse(valor ?? '[]');
+
+    if (!Array.isArray(guardadas)) return [];
+
+    return guardadas
+      .filter((item): item is string => typeof item === 'string')
+      .filter((item) => /^[A-Z0-9-]{1,10}$/.test(item))
+      .slice(0, MAX_PLACAS_RECIENTES);
+  } catch {
+    return [];
+  }
+}

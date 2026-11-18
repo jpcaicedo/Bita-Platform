@@ -4,11 +4,15 @@
   padding-bottom: 108px;
 }
 
+/* Encabezado del Figma (componente "Header", marco de 390): círculo de 36
+   en x = 20, título en x = 64, campana de 44 y avatar de 32 a la derecha,
+   todo centrado en y = 83. El contenido empieza en y = 104. */
 .g-app-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 20px 10px;
+  gap: 8px;
+  margin-bottom: -7px;
+  padding: 61px 20px 0;
 }
 
 .g-app-car,
@@ -17,10 +21,15 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border: 0;
   border-radius: 50%;
+}
+
+.g-app-user {
+  width: 32px;
+  height: 32px;
 }
 
 .g-app-car,
@@ -40,8 +49,9 @@
   flex: 1;
   min-width: 0;
   font-family: var(--g-font-display);
-  font-size: 1.18rem;
+  font-size: 22px;
   font-weight: 800;
+  line-height: 28px;
   color: var(--g-azul);
   white-space: nowrap;
   overflow: hidden;
@@ -57,8 +67,8 @@
 .g-app-bell {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   background: transparent;

@@ -1,9 +1,15 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { bitaFetch } from './bita-api';
 import { requireWorkshop } from './session';
-import { createMaintenance } from './taller';
+import {
+  createMaintenance,
+  leerPlacasRecientes,
+  MAX_PLACAS_RECIENTES,
+  PLACAS_RECIENTES_COOKIE,
+} from './taller';
 import { buildObservaciones } from './taller-observaciones';
 
 const MAX_OBSERVACIONES = 2000;
@@ -113,4 +119,34 @@ export async function registerMaintenanceAction(formData: FormData) {
   redirect(
     `/taller/comprobante/${result.data.record.id}?vehiculo=${vehicleId}`,
   );
+}
+
+// Busca una placa y la guarda en "Búsquedas recientes".
+export async function searchPlateAction(formData: FormData) {
+  await requireWorkshop();
+
+  const placa = texto(formData, 'placa').toUpperCase();
+
+  if (!placa) redirect('/taller');
+
+  // Solo se recuerdan placas con forma válida (como las valida el backend).
+  if (placa.length <= 10 && /^[A-Z0-9-]+$/.test(placa)) {
+    const cookieStore = await cookies();
+    const recientes = [
+      placa,
+      ...leerPlacasRecientes(cookieStore.get(PLACAS_RECIENTES_COOKIE)?.value),
+    ]
+      .filter((item, index, todas) => todas.indexOf(item) === index)
+      .slice(0, MAX_PLACAS_RECIENTES);
+
+    cookieStore.set(PLACAS_RECIENTES_COOKIE, JSON.stringify(recientes), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+
+  redirect(`/taller?placa=${encodeURIComponent(placa)}`);
 }
