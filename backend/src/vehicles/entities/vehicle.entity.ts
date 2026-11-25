@@ -49,6 +49,13 @@ export class VehicleEntity {
   })
   currentKilometers!: number;
 
+  // Foto del vehículo como data URL (data:image/jpeg;base64,...). Va en la
+  // base de datos porque el disco de Render se borra en cada deploy.
+  // select: false = no viaja en las consultas normales (la lista del garaje
+  // no carga cientos de KB); solo se lee con getPhoto().
+  @Column({ type: 'text', nullable: true, select: false })
+  photo!: string | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 

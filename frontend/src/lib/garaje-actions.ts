@@ -5,10 +5,16 @@ import { redirect } from 'next/navigation';
 import { bitaFetch } from './bita-api';
 import { unirTaller } from './garaje-formato';
 import { requireOwner } from './session';
+import { isUuid } from './uuid';
 
 // Mismas reglas del CreateVehicleDto del backend.
 const PLACA_PATTERN = /^[A-Za-z0-9-]{1,10}$/;
 const MAX_OBSERVACIONES = 2000;
+
+// Mismas reglas del UpdateVehiclePhotoDto del backend.
+const FOTO_PATTERN =
+  /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
+const MAX_FOTO = 800_000;
 
 function texto(formData: FormData, key: string): string {
   return String(formData.get(key) ?? '').trim();
@@ -134,4 +140,34 @@ export async function registerOwnerMaintenanceAction(formData: FormData) {
   revalidatePath('/garaje');
   revalidatePath(`/garaje/${vehicleId}`);
   redirect(`/garaje/${vehicleId}?registrado=1`);
+}
+
+// Foto del vehículo: PUT /vehicles/:id/photo
+// El componente VehiclePhoto achica la imagen en el navegador y envía el
+// formulario con la foto ya convertida a texto (data URL).
+export async function uploadVehiclePhotoAction(formData: FormData) {
+  await requireOwner();
+
+  const vehicleId = texto(formData, 'vehicleId');
+  const photo = texto(formData, 'photo');
+
+  if (!isUuid(vehicleId)) redirect('/garaje');
+
+  const volver = (foto: string): never =>
+    redirect(`/garaje/${vehicleId}?foto=${foto}`);
+
+  if (photo.length > MAX_FOTO) volver('grande');
+  if (!FOTO_PATTERN.test(photo)) volver('formato');
+
+  const result = await bitaFetch(`/vehicles/${vehicleId}/photo`, {
+    method: 'PUT',
+    body: JSON.stringify({ photo }),
+  });
+
+  if (result.status === 0) volver('conexion');
+  if (result.status === 413) volver('grande');
+  if (!result.ok) volver('error');
+
+  revalidatePath(`/garaje/${vehicleId}`);
+  volver('ok');
 }

@@ -17,6 +17,14 @@ export function getMyVehicles(): Promise<BitaResponse<OwnerVehicle[]>> {
   return bitaFetch<OwnerVehicle[]>('/vehicles');
 }
 
+// Foto del vehículo como data URL, o null si el dueño no ha subido una.
+// Va aparte de getMyVehicle porque pesa cientos de KB y la lista no la usa.
+export function getVehiclePhoto(
+  vehicleId: string,
+): Promise<BitaResponse<{ photo: string | null }>> {
+  return bitaFetch<{ photo: string | null }>(`/vehicles/${vehicleId}/photo`);
+}
+
 export function getMyVehicle(
   vehicleId: string,
 ): Promise<BitaResponse<OwnerVehicle>> {
