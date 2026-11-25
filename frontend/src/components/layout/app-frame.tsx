@@ -37,6 +37,9 @@ function screenMeta(pathname: string): ScreenMeta {
   if (pathname.startsWith('/taller/vehiculos')) {
     return { title: 'Vehículos', back: '/taller' };
   }
+  if (pathname.startsWith('/taller/historial')) {
+    return { title: 'Historial' };
+  }
   if (pathname.startsWith('/taller/perfil')) {
     return { title: 'Perfil del Taller', back: '/taller' };
   }
@@ -85,6 +88,9 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Talleres Autorizados', back: `/garaje/${vehicleId}` };
   }
 
+  if (pathname.startsWith('/garaje/historial')) {
+    return { title: 'Historial' };
+  }
   if (pathname.startsWith('/garaje/nuevo')) {
     return { title: 'Nuevo Vehículo', back: '/garaje' };
   }
@@ -95,7 +101,7 @@ function screenMeta(pathname: string): ScreenMeta {
 }
 
 function isActive(pathname: string, href: string): boolean {
-  // "/taller" solo coincide exacto para que /taller/vehiculos marque Historial.
+  // "/taller" y "/garaje" solo coinciden exacto para no marcar sus subpantallas.
   if (href === '/taller' || href === '/garaje') {
     if (
       href === '/garaje' &&
@@ -105,8 +111,19 @@ function isActive(pathname: string, href: string): boolean {
     }
     return pathname === href;
   }
-  // El detalle de un servicio también pertenece al historial.
-  if (href === '/taller/vehiculos' && pathname.startsWith('/taller/servicio')) {
+  // El detalle y el comprobante de un servicio pertenecen al historial.
+  if (
+    href === '/taller/historial' &&
+    (pathname.startsWith('/taller/servicio') ||
+      pathname.startsWith('/taller/comprobante'))
+  ) {
+    return true;
+  }
+  // Registrar un servicio sale del botón "Registrar" (lista de vehículos).
+  if (
+    href === '/taller/vehiculos' &&
+    pathname.startsWith('/taller/registrar')
+  ) {
     return true;
   }
   // Las autorizaciones de un vehículo pertenecen a Talleres.

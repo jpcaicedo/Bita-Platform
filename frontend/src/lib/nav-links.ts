@@ -13,16 +13,22 @@ export interface NavLink {
 export const NAV_LINKS: Record<NavRole, NavLink[]> = {
   owner: [
     { href: '/garaje', label: 'Autos', icon: 'cars' },
-    { href: '/garaje', label: 'Historial', icon: 'history' },
+    { href: '/garaje/historial', label: 'Historial', icon: 'history' },
     { href: '/garaje/nuevo', label: 'Nuevo', icon: 'plus', primary: true },
     { href: '/talleres', label: 'Talleres', icon: 'workshops' },
     { href: '/ajustes', label: 'Ajustes', icon: 'settings' },
   ],
   workshop: [
-    { href: '/taller', label: 'Autos', icon: 'cars' },
-    { href: '/taller/vehiculos', label: 'Historial', icon: 'history' },
-    { href: '/taller', label: 'Nuevo', icon: 'plus', primary: true },
-    { href: '/taller/perfil', label: 'Talleres', icon: 'workshops' },
+    { href: '/taller', label: 'Recepción', icon: 'cars' },
+    { href: '/taller/historial', label: 'Historial', icon: 'history' },
+    // Para registrar un servicio primero se elige un vehículo autorizado.
+    {
+      href: '/taller/vehiculos',
+      label: 'Registrar',
+      icon: 'plus',
+      primary: true,
+    },
+    { href: '/taller/perfil', label: 'Perfil', icon: 'workshops' },
     { href: '/ajustes', label: 'Ajustes', icon: 'settings' },
   ],
 };
