@@ -16,6 +16,7 @@ describe('VehiclesService', () => {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
     existsBy: jest.fn(),
     merge: jest.fn(),
@@ -254,5 +255,80 @@ describe('VehiclesService', () => {
       expect.objectContaining({ id: 'vehicle-1' }),
       { currentKilometers: 15000 },
     );
+  });
+
+  it('returns the photo of an owned vehicle', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-1',
+    });
+    repositoryMock.findOne.mockResolvedValue({
+      id: 'vehicle-1',
+      photo: 'data:image/jpeg;base64,AAAA',
+    });
+
+    const result = await service.getPhoto('vehicle-1', 'owner-1');
+
+    expect(repositoryMock.findOne).toHaveBeenCalledWith({
+      where: { id: 'vehicle-1' },
+      select: { id: true, photo: true },
+    });
+    expect(result).toBe('data:image/jpeg;base64,AAAA');
+  });
+
+  it('returns null when the vehicle has no photo', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-1',
+    });
+    repositoryMock.findOne.mockResolvedValue({ id: 'vehicle-1', photo: null });
+
+    await expect(service.getPhoto('vehicle-1', 'owner-1')).resolves.toBeNull();
+  });
+
+  it('does not return the photo of another user vehicle', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-2',
+    });
+
+    await expect(service.getPhoto('vehicle-1', 'owner-1')).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(repositoryMock.findOne).not.toHaveBeenCalled();
+  });
+
+  it('updates the photo of an owned vehicle', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-1',
+    });
+
+    await service.updatePhoto(
+      'vehicle-1',
+      'owner-1',
+      'data:image/jpeg;base64,AAAA',
+    );
+
+    expect(repositoryMock.update).toHaveBeenCalledWith(
+      { id: 'vehicle-1' },
+      { photo: 'data:image/jpeg;base64,AAAA' },
+    );
+  });
+
+  it('does not update the photo of another user vehicle', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-2',
+    });
+
+    await expect(
+      service.updatePhoto(
+        'vehicle-1',
+        'owner-1',
+        'data:image/jpeg;base64,AAAA',
+      ),
+    ).rejects.toThrow(ForbiddenException);
+    expect(repositoryMock.update).not.toHaveBeenCalled();
   });
 });

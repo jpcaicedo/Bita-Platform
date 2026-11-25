@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Req,
   UseGuards,
   ValidationPipe,
@@ -14,6 +15,7 @@ import { AuthenticatedUser } from '../auth/authenticated-user.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { UpdateVehiclePhotoDto } from './dto/update-vehicle-photo.dto';
 import { VehiclesService } from './vehicles.service';
 
 const requestValidationPipe = new ValidationPipe({
@@ -46,6 +48,25 @@ export class VehiclesController {
     @Req() request: { user: AuthenticatedUser },
   ) {
     return this.vehiclesService.findOwnedOrFail(id, request.user.id);
+  }
+
+  @Get(':id/photo')
+  async getPhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: { user: AuthenticatedUser },
+  ) {
+    const photo = await this.vehiclesService.getPhoto(id, request.user.id);
+    return { photo };
+  }
+
+  @Put(':id/photo')
+  async updatePhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(requestValidationPipe) dto: UpdateVehiclePhotoDto,
+    @Req() request: { user: AuthenticatedUser },
+  ) {
+    await this.vehiclesService.updatePhoto(id, request.user.id, dto.photo);
+    return { photo: dto.photo };
   }
 
   @Patch(':id')
