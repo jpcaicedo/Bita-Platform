@@ -102,6 +102,23 @@ export class VehiclesService {
     return this.vehiclesRepository.save(vehicle);
   }
 
+  async getPhoto(id: string, userId: string): Promise<string | null> {
+    await this.findOwnedOrFail(id, userId);
+
+    // photo tiene select: false, así que hay que pedirla explícitamente.
+    const vehicle = await this.vehiclesRepository.findOne({
+      where: { id },
+      select: { id: true, photo: true },
+    });
+
+    return vehicle?.photo ?? null;
+  }
+
+  async updatePhoto(id: string, userId: string, photo: string): Promise<void> {
+    await this.findOwnedOrFail(id, userId);
+    await this.vehiclesRepository.update({ id }, { photo });
+  }
+
   async registerKilometers(id: string, kilometers: number): Promise<void> {
     await this.vehiclesRepository.update(
       { id, currentKilometers: LessThan(kilometers) },

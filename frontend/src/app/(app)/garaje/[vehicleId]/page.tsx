@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { GarageIcon } from '@/components/garaje/garage-icon';
+import { VehiclePhoto } from '@/components/garaje/vehicle-photo';
 import {
   elegirAlerta,
   etiquetaEstado,
   getMyVehicle,
+  getVehiclePhoto,
   masUrgente,
   progresoServicio,
 } from '@/lib/garaje';
@@ -39,7 +41,26 @@ export const metadata: Metadata = {
 interface DetailParams {
   tipo?: string;
   registrado?: string;
+  foto?: string;
 }
+
+// Mensajes de ?foto= después de subir la foto del vehículo.
+const MENSAJES_FOTO: Record<string, { ok: boolean; texto: string }> = {
+  ok: { ok: true, texto: 'Foto del vehículo actualizada.' },
+  grande: {
+    ok: false,
+    texto: 'La foto es demasiado pesada. Prueba con otra imagen.',
+  },
+  formato: { ok: false, texto: 'Elige una imagen JPG, PNG o WebP.' },
+  conexion: {
+    ok: false,
+    texto: 'No pudimos conectar con el servidor. Inténtalo otra vez.',
+  },
+  error: {
+    ok: false,
+    texto: 'No pudimos guardar la foto. Inténtalo otra vez.',
+  },
+};
 
 export default function VehicleDetailPage({
   params,
@@ -63,16 +84,19 @@ async function VehicleDetailContent({
   searchParams: Promise<DetailParams>;
 }) {
   const { vehicleId } = await params;
-  const { tipo, registrado } = await searchParams;
+  const { tipo, registrado, foto } = await searchParams;
 
   // Todo en paralelo para que cargue más rápido.
-  const [vehicle, health, history, types, reminders] = await Promise.all([
-    getMyVehicle(vehicleId),
-    getVehicleHealth(vehicleId),
-    getVehicleHistory(vehicleId),
-    getMaintenanceTypes(),
-    getVehicleReminders(vehicleId),
-  ]);
+  const [vehicle, health, history, types, reminders, photo] = await Promise.all(
+    [
+      getMyVehicle(vehicleId),
+      getVehicleHealth(vehicleId),
+      getVehicleHistory(vehicleId),
+      getMaintenanceTypes(),
+      getVehicleReminders(vehicleId),
+      getVehiclePhoto(vehicleId),
+    ],
+  );
 
   // 404 = no existe, 403 = es de otro dueño. Ninguno se puede ver.
   if (!vehicle.ok || !vehicle.data) {
@@ -148,10 +172,25 @@ async function VehicleDetailContent({
         </p>
       )}
 
+      {foto && MENSAJES_FOTO[foto] && (
+        <p
+          className={`g-alert ${
+            MENSAJES_FOTO[foto].ok ? 'g-alert--ok' : 'g-alert--error'
+          }`}
+          role={MENSAJES_FOTO[foto].ok ? 'status' : 'alert'}
+          style={{ marginBottom: 16 }}
+        >
+          {MENSAJES_FOTO[foto].texto}
+        </p>
+      )}
+
       <section className="g-garage-hero">
         <div className="g-garage-photo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/garaje/foto-carro.png" alt="" />
+          <VehiclePhoto
+            vehicleId={auto.id}
+            alt={`${auto.brand} ${auto.model}`}
+            photo={photo.ok ? (photo.data?.photo ?? null) : null}
+          />
           <span
             className={`g-garage-badge g-garage-photo-status g-garage-badge--${
               status ?? 'none'

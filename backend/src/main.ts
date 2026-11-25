@@ -1,13 +1,18 @@
 import { NestFactory } from '@nestjs/core';
-import type { Express, Request, Response } from 'express';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { Request, Response } from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Express acepta por defecto bodies JSON de hasta 100 KB. La foto del
+  // vehículo (PUT /vehicles/:id/photo) puede pesar más, así que subimos a 1 MB.
+  app.useBodyParser('json', { limit: '1mb' });
 
   // La API vive bajo /api. La raíz se registra directo en Express (fuera del
   // router de Nest) para no responder 404 al abrir la URL base del deploy.
-  const server = app.getHttpAdapter().getInstance() as Express;
+  const server = app.getHttpAdapter().getInstance();
   server.get('/', (_req: Request, res: Response) => {
     res.json({
       service: 'bita-api',
