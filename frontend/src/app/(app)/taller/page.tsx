@@ -323,7 +323,7 @@ async function PlateResult({
 
         <div className="g-recep-photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/garaje/foto-carro.png" alt="" />
+          <img src="/garaje/foto-vehiculo.jpg" alt="" />
           <span>
             <ShieldIcon size={12} />
             Bitácora activa
