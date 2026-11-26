@@ -14,6 +14,15 @@ import { WorkshopAuthorizationEntity } from '../../authorizations/entities/works
 import { MaintenanceRecordEntity } from '../../maintenance-records/entities/maintenance-record.entity';
 import { SmartReminderEntity } from '../../reminders/entities/smart-reminder.entity';
 
+// Tipos de motorización que se pueden elegir al registrar el vehículo.
+export const FUEL_TYPES = [
+  'gasolina',
+  'diesel',
+  'hibrido',
+  'electrico',
+] as const;
+export type FuelType = (typeof FUEL_TYPES)[number];
+
 @Entity('vehicles')
 @Index('IDX_vehicles_owner_id', ['ownerId'])
 export class VehicleEntity {
@@ -48,6 +57,9 @@ export class VehicleEntity {
     default: 0,
   })
   currentKilometers!: number;
+
+  @Column({ type: 'varchar', length: 20, name: 'fuel_type', nullable: true })
+  fuelType!: FuelType | null;
 
   // Foto del vehículo como data URL (data:image/jpeg;base64,...). Va en la
   // base de datos porque el disco de Render se borra en cada deploy.

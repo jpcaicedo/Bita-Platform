@@ -8,6 +8,9 @@ import { requireOwner } from './session';
 import { isUuid } from './uuid';
 
 // Mismas reglas del CreateVehicleDto del backend.
+// Mismos valores que FUEL_TYPES del backend.
+const MOTORIZACIONES = ['gasolina', 'diesel', 'hibrido', 'electrico'];
+
 const PLACA_PATTERN = /^[A-Za-z0-9-]{1,10}$/;
 const MAX_OBSERVACIONES = 2000;
 
@@ -36,6 +39,7 @@ export async function createVehicleAction(formData: FormData) {
   const brand = texto(formData, 'brand');
   const model = texto(formData, 'model');
   const yearRaw = texto(formData, 'year');
+  const fuelType = texto(formData, 'fuelType');
   const kmRaw = texto(formData, 'currentKilometers');
 
   if (!PLACA_PATTERN.test(plate)) volverANuevoVehiculo('placa');
@@ -65,6 +69,7 @@ export async function createVehicleAction(formData: FormData) {
       brand,
       model,
       ...(year === undefined ? {} : { year }),
+      ...(MOTORIZACIONES.includes(fuelType) ? { fuelType } : {}),
       ...(currentKilometers === undefined ? {} : { currentKilometers }),
     }),
     redirectOn401: false,

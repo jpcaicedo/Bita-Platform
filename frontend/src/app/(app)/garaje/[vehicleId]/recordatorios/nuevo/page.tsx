@@ -85,7 +85,6 @@ async function NewReminderContent({
   return (
     <section className="g-gest">
       <header className="g-gest-head">
-        <h2>Nuevo recordatorio</h2>
         <p>
           Te avisaremos antes de que venza para que nada se te escape.
         </p>

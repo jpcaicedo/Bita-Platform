@@ -64,9 +64,27 @@ describe('VehiclesService', () => {
       model: '3',
       year: null,
       currentKilometers: 0,
+      fuelType: null,
     });
     expect(repositoryMock.save).toHaveBeenCalledWith(built);
     expect(result).toEqual(saved);
+  });
+
+  it('saves the fuel type when the owner chooses one', async () => {
+    repositoryMock.existsBy.mockResolvedValue(false);
+    repositoryMock.create.mockReturnValue({});
+    repositoryMock.save.mockResolvedValue({});
+
+    await service.create('owner-1', {
+      plate: 'abc123',
+      brand: 'Toyota',
+      model: 'Prius',
+      fuelType: 'hibrido',
+    });
+
+    expect(repositoryMock.create).toHaveBeenCalledWith(
+      expect.objectContaining({ fuelType: 'hibrido' }),
+    );
   });
 
   it('does not create a vehicle when the plate is already registered', async () => {

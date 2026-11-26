@@ -103,7 +103,6 @@ async function CompleteContent({
   return (
     <section className="g-gest">
       <header className="g-gest-head">
-        <h2>Completar recordatorio</h2>
         <p>Confirma que ya hiciste este mantenimiento.</p>
       </header>
 
