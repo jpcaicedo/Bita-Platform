@@ -43,6 +43,27 @@ Content-Type: application/json
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{ownerToken}}
 
+### Actualizar el perfil propio (nombre, correo y teléfono)
+PATCH {{baseUrl}}/auth/me
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "username": "Carlos Mendoza",
+  "email": "dueno@example.com",
+  "phone": "+57 300 123 4567"
+}
+
+### Cambiar la contraseña (verifica la actual)
+PATCH {{baseUrl}}/auth/me/password
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "Secreto123",
+  "newPassword": "Nuevo1234"
+}
+
 ### Catálogo de tipos de mantenimiento
 GET {{baseUrl}}/maintenance-types
 Authorization: Bearer {{ownerToken}}

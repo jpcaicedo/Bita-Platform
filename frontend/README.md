@@ -55,7 +55,7 @@ El layout de `(app)` exige sesión y pinta el encabezado y la barra inferior.
 
 | Ruta | Rol | Pantalla |
 |---|---|---|
-| `/ajustes` | Ambos | Perfil de la cuenta y cerrar sesión |
+| `/ajustes` | Ambos | Perfil editable (nombre, correo, teléfono), cambio de contraseña y cerrar sesión |
 | `/taller` | Taller | Recepción por placa |
 | `/taller/vehiculos` | Taller | Vehículos autorizados e historial |
 | `/taller/vehiculos/[vehicleId]` | Taller | Detalle, próximos mantenimientos e historial |
