@@ -211,3 +211,20 @@ export function ChevronRightIcon({ size, className }: IconProps) {
   );
 }
 
+export function PhoneIcon({ size, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M7 3.5h3l1.2 4-2 1.4a12 12 0 0 0 5.9 5.9l1.4-2 4 1.2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 5 5.7a2 2 0 0 1 2-2.2Z" />
+    </svg>
+  );
+}
+
+export function LogOutIcon({ size, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14" />
+      <path d="M16 8l4 4-4 4M10 12h10" />
+    </svg>
+  );
+}
+
