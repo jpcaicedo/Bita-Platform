@@ -48,7 +48,7 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Otorgar Acceso', back: '/talleres' };
   }
   if (pathname.startsWith('/talleres')) return { title: 'Talleres' };
-  if (pathname.startsWith('/taller')) return { title: 'Vehículos' };
+  if (pathname.startsWith('/taller')) return { title: 'Recepción' };
 
   const reminders = pathname.match(/^\/garaje\/([^/]+)\/recordatorios(\/.*)?$/);
   if (reminders) {

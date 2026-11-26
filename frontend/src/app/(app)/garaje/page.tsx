@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { GarageIcon } from '@/components/garaje/garage-icon';
 import { GarageVehicleCard } from '@/components/garaje/vehicle-card';
+import { PlusIcon } from '@/components/ui/icons';
 import { getMyVehicles, recordatorioMasUrgente } from '@/lib/garaje';
 import { getVehicleReminders } from '@/lib/reminders';
 import { requireOwner } from '@/lib/session';
@@ -53,7 +53,7 @@ async function GarageContent({
         className="g-garage-quick"
         aria-label="Agregar vehículo"
       >
-        <GarageIcon name="editar" width={21} height={22} />
+        <PlusIcon size={22} />
       </Link>
     </header>
   );
