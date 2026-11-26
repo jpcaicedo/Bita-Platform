@@ -186,3 +186,26 @@
   width: min(100%, 360px);
   height: 180px;
 }
+
+/* Campana con el número de notificaciones sin leer */
+.g-app-bell {
+  position: relative;
+}
+
+.g-app-bell-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid var(--g-crema);
+  border-radius: var(--g-radio-pill);
+  background: var(--g-alerta-texto);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}

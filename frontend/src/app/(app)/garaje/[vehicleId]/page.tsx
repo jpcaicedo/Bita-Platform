@@ -43,6 +43,7 @@ interface DetailParams {
   tipo?: string;
   registrado?: string;
   foto?: string;
+  editado?: string;
 }
 
 // Mensajes de ?foto= después de subir la foto del vehículo.
@@ -85,7 +86,7 @@ async function VehicleDetailContent({
   searchParams: Promise<DetailParams>;
 }) {
   const { vehicleId } = await params;
-  const { tipo, registrado, foto } = await searchParams;
+  const { tipo, registrado, foto, editado } = await searchParams;
 
   // Todo en paralelo para que cargue más rápido.
   const [vehicle, health, history, types, reminders, photo] = await Promise.all(
@@ -161,8 +162,27 @@ async function VehicleDetailContent({
             {etiquetaMotorizacion(auto.fuelType) ?? 'Mi fiel compañero de ruta'}
           </p>
         </div>
-        <span className="g-garage-plate-tag">{auto.plate}</span>
+        <div className="g-garage-detail-actions">
+          <span className="g-garage-plate-tag">{auto.plate}</span>
+          <Link
+            href={`/garaje/${auto.id}/editar`}
+            className="g-garage-edit"
+            aria-label="Editar vehículo"
+          >
+            <GarageIcon name="editar" width={16} height={17} />
+          </Link>
+        </div>
       </header>
+
+      {editado === '1' && (
+        <p
+          className="g-alert g-alert--ok"
+          role="status"
+          style={{ marginBottom: 16 }}
+        >
+          Datos del vehículo actualizados.
+        </p>
+      )}
 
       {registrado === '1' && (
         <p

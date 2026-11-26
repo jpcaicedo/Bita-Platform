@@ -360,3 +360,10 @@ img {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Botón para acciones que no se pueden deshacer (eliminar). */
+.g-btn--danger {
+  background: var(--g-alerta-texto);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(181, 84, 63, 0.25);
+}

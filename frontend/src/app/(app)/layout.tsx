@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { AppFrame } from '@/components/layout/app-frame';
+import { NotificationBell } from '@/components/layout/notification-bell';
 import { requireSession } from '@/lib/session';
 
 // Leer la cookie de sesión siempre bloquea: no puede formar parte del shell
@@ -9,11 +10,7 @@ export const instant = false;
 
 // Con cacheComponents activo, leer cookies debe ocurrir dentro de <Suspense>.
 // El layout protege todo el grupo (app) y pinta encabezado + barra inferior.
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
       fallback={
@@ -31,7 +28,10 @@ async function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = await requireSession();
 
   return (
-    <AppFrame role={session.isWorkshop ? 'workshop' : 'owner'}>
+    <AppFrame
+      role={session.isWorkshop ? 'workshop' : 'owner'}
+      bell={<NotificationBell />}
+    >
       {children}
     </AppFrame>
   );

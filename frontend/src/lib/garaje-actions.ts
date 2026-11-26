@@ -7,10 +7,10 @@ import { unirTaller } from './garaje-formato';
 import { requireOwner } from './session';
 import { isUuid } from './uuid';
 
-// Mismas reglas del CreateVehicleDto del backend.
 // Mismos valores que FUEL_TYPES del backend.
 const MOTORIZACIONES = ['gasolina', 'diesel', 'hibrido', 'electrico'];
 
+// Mismas reglas del CreateVehicleDto del backend.
 const PLACA_PATTERN = /^[A-Za-z0-9-]{1,10}$/;
 const MAX_OBSERVACIONES = 2000;
 
@@ -31,10 +31,21 @@ function volverARegistro(vehicleId: string, error: string): never {
   redirect(`/garaje/${vehicleId}/mantenimiento/nuevo?error=${error}`);
 }
 
-// Agregar vehículo: POST /vehicles
-export async function createVehicleAction(formData: FormData) {
-  await requireOwner();
+interface DatosVehiculo {
+  plate: string;
+  brand: string;
+  model: string;
+  year?: number;
+  currentKilometers?: number;
+  fuelType?: string;
+}
 
+// Lee y valida los campos del formulario de vehículo (agregar o editar).
+// Si algo está mal, llama a volver() con el código de error y se detiene.
+function leerVehiculo(
+  formData: FormData,
+  volver: (error: string) => never,
+): DatosVehiculo {
   const plate = texto(formData, 'plate').toUpperCase();
   const brand = texto(formData, 'brand');
   const model = texto(formData, 'model');
@@ -42,16 +53,16 @@ export async function createVehicleAction(formData: FormData) {
   const fuelType = texto(formData, 'fuelType');
   const kmRaw = texto(formData, 'currentKilometers');
 
-  if (!PLACA_PATTERN.test(plate)) volverANuevoVehiculo('placa');
-  if (!brand || brand.length > 60) volverANuevoVehiculo('marca');
-  if (!model || model.length > 60) volverANuevoVehiculo('modelo');
+  if (!PLACA_PATTERN.test(plate)) volver('placa');
+  if (!brand || brand.length > 60) volver('marca');
+  if (!model || model.length > 60) volver('modelo');
 
   const year = yearRaw === '' ? undefined : Number(yearRaw);
   if (
     year !== undefined &&
     (!Number.isInteger(year) || year < 1900 || year > 2100)
   ) {
-    volverANuevoVehiculo('anio');
+    volver('anio');
   }
 
   const currentKilometers = kmRaw === '' ? undefined : Number(kmRaw);
@@ -59,19 +70,28 @@ export async function createVehicleAction(formData: FormData) {
     currentKilometers !== undefined &&
     (!Number.isInteger(currentKilometers) || currentKilometers < 0)
   ) {
-    volverANuevoVehiculo('km');
+    volver('km');
   }
+
+  return {
+    plate,
+    brand,
+    model,
+    ...(year === undefined ? {} : { year }),
+    ...(MOTORIZACIONES.includes(fuelType) ? { fuelType } : {}),
+    ...(currentKilometers === undefined ? {} : { currentKilometers }),
+  };
+}
+
+// Agregar vehículo: POST /vehicles
+export async function createVehicleAction(formData: FormData) {
+  await requireOwner();
+
+  const datos = leerVehiculo(formData, volverANuevoVehiculo);
 
   const result = await bitaFetch<{ id: string }>('/vehicles', {
     method: 'POST',
-    body: JSON.stringify({
-      plate,
-      brand,
-      model,
-      ...(year === undefined ? {} : { year }),
-      ...(MOTORIZACIONES.includes(fuelType) ? { fuelType } : {}),
-      ...(currentKilometers === undefined ? {} : { currentKilometers }),
-    }),
+    body: JSON.stringify(datos),
     redirectOn401: false,
   });
 
@@ -81,6 +101,57 @@ export async function createVehicleAction(formData: FormData) {
 
   revalidatePath('/garaje');
   redirect('/garaje?nuevo=1');
+}
+
+// Editar vehículo: PATCH /vehicles/:id
+export async function updateVehicleAction(formData: FormData) {
+  await requireOwner();
+
+  const vehicleId = texto(formData, 'vehicleId');
+  if (!isUuid(vehicleId)) redirect('/garaje');
+
+  const volver = (error: string): never =>
+    redirect(`/garaje/${vehicleId}/editar?error=${error}`);
+
+  const datos = leerVehiculo(formData, volver);
+
+  const result = await bitaFetch(`/vehicles/${vehicleId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(datos),
+  });
+
+  if (result.status === 0) volver('conexion');
+  if (result.status === 409) volver('duplicada');
+  // El backend no deja bajar el kilometraje (400 con ese mensaje).
+  if (result.status === 400 && result.message?.includes('kilometers')) {
+    volver('kmMenor');
+  }
+  if (!result.ok) volver('datos');
+
+  revalidatePath('/garaje');
+  revalidatePath(`/garaje/${vehicleId}`);
+  redirect(`/garaje/${vehicleId}?editado=1`);
+}
+
+// Eliminar vehículo: DELETE /vehicles/:id
+// Se llega aquí desde la pantalla de confirmación /garaje/:id/eliminar.
+export async function deleteVehicleAction(formData: FormData) {
+  await requireOwner();
+
+  const vehicleId = texto(formData, 'vehicleId');
+  if (!isUuid(vehicleId)) redirect('/garaje');
+
+  const result = await bitaFetch(`/vehicles/${vehicleId}`, {
+    method: 'DELETE',
+  });
+
+  if (result.status === 0) {
+    redirect(`/garaje/${vehicleId}/eliminar?error=conexion`);
+  }
+  if (!result.ok) redirect(`/garaje/${vehicleId}/eliminar?error=datos`);
+
+  revalidatePath('/garaje');
+  redirect('/garaje?eliminado=1');
 }
 
 // Registrar mantenimiento como dueño: POST /vehicles/:id/maintenance

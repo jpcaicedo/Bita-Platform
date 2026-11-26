@@ -21,6 +21,7 @@ describe('VehiclesService', () => {
     existsBy: jest.fn(),
     merge: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -348,5 +349,28 @@ describe('VehiclesService', () => {
       ),
     ).rejects.toThrow(ForbiddenException);
     expect(repositoryMock.update).not.toHaveBeenCalled();
+  });
+
+  it('deletes a vehicle of its owner', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-1',
+    });
+
+    await service.remove('vehicle-1', 'owner-1');
+
+    expect(repositoryMock.delete).toHaveBeenCalledWith({ id: 'vehicle-1' });
+  });
+
+  it('does not delete the vehicle of another user', async () => {
+    repositoryMock.findOneBy.mockResolvedValue({
+      id: 'vehicle-1',
+      ownerId: 'owner-2',
+    });
+
+    await expect(service.remove('vehicle-1', 'owner-1')).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(repositoryMock.delete).not.toHaveBeenCalled();
   });
 });
