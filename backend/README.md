@@ -54,6 +54,8 @@ Todas las rutas van bajo el prefijo `/api`. Salvo `POST /auth/register`,
 | POST | `/auth/register` | Crea usuario (`email`, `password`, `username` opcional) |
 | POST | `/auth/login` | Devuelve `access_token` (JWT de 15 min) |
 | GET | `/auth/me` | Usuario autenticado (`id`, `email`, `waid`, `phone`, `username`) |
+| PATCH | `/auth/me` | Actualiza el perfil propio (`username`, `email`, `phone`) |
+| PATCH | `/auth/me/password` | Cambia la contraseña verificando la actual |
 | GET | `/maintenance-types` | Catálogo de tipos de mantenimiento activos |
 | POST | `/maintenance-types` | Crea un tipo de mantenimiento |
 | GET | `/maintenance-types/:id` | Detalle de un tipo |
