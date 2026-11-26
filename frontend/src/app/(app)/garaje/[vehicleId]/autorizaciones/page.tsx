@@ -74,7 +74,6 @@ async function AuthorizationsContent({
   return (
     <section className="g-gest">
       <header className="g-gest-head">
-        <h2>Talleres autorizados</h2>
         <p>
           Controla qué talleres pueden consultar o asentar mantenimientos en
           este vehículo.

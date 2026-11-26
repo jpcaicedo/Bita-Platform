@@ -15,6 +15,7 @@ import {
   diasDesde,
   diasHasta,
   estiloTipo,
+  etiquetaMotorizacion,
   formatMiles,
   separarTaller,
 } from '@/lib/garaje-formato';
@@ -156,7 +157,9 @@ async function VehicleDetailContent({
           <h2>
             {auto.brand} {auto.model} {auto.year ?? ''}
           </h2>
-          <p>Mi fiel compañero de ruta</p>
+          <p>
+            {etiquetaMotorizacion(auto.fuelType) ?? 'Mi fiel compañero de ruta'}
+          </p>
         </div>
         <span className="g-garage-plate-tag">{auto.plate}</span>
       </header>

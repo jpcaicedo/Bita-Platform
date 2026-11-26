@@ -70,7 +70,6 @@ async function RemindersContent({
   return (
     <section className="g-gest">
       <header className="g-gest-head">
-        <h2>Recordatorios</h2>
         <p>
           Avisos por fecha o kilometraje para que ningún mantenimiento se te
           pase.

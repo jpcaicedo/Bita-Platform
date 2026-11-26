@@ -1,4 +1,5 @@
 // Ayudas de presentación del frente B. No piden datos: solo dan formato.
+import type { FuelType } from '@/types/garaje';
 
 // Días completos desde una fecha "YYYY-MM-DD" hasta hoy.
 export function diasDesde(isoDate: string): number {
@@ -108,4 +109,16 @@ export function estiloTipo(nombre: string): EstiloTipo {
     fondo: '#ffddb4',
     color: '#765930',
   };
+}
+
+// Nombre para mostrar de la motorización guardada en el vehículo.
+const MOTORIZACION: Record<FuelType, string> = {
+  gasolina: 'Gasolina',
+  diesel: 'Diésel',
+  hibrido: 'Híbrido',
+  electrico: 'Eléctrico',
+};
+
+export function etiquetaMotorizacion(fuelType: FuelType | null): string | null {
+  return fuelType ? MOTORIZACION[fuelType] : null;
 }

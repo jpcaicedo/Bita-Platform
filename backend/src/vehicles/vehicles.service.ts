@@ -29,6 +29,7 @@ export class VehiclesService {
       model: dto.model,
       year: dto.year ?? null,
       currentKilometers: dto.currentKilometers ?? 0,
+      fuelType: dto.fuelType ?? null,
     });
 
     return this.vehiclesRepository.save(vehicle);

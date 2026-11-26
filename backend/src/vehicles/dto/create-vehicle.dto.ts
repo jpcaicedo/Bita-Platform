@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -9,6 +10,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { FUEL_TYPES, type FuelType } from '../entities/vehicle.entity';
 
 export class CreateVehicleDto {
   @IsString()
@@ -41,4 +43,10 @@ export class CreateVehicleDto {
   @IsOptional()
   @Min(0)
   currentKilometers?: number;
+
+  @IsOptional()
+  @IsIn(FUEL_TYPES, {
+    message: 'La motorización debe ser gasolina, diesel, hibrido o electrico',
+  })
+  fuelType?: FuelType;
 }
