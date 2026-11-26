@@ -180,7 +180,7 @@ async function NewVehicleContent({
                 id="currentKilometers"
                 name="currentKilometers"
                 type="number"
-                placeholder="45,000"
+                placeholder="45.000"
                 min={0}
                 step={1}
               />

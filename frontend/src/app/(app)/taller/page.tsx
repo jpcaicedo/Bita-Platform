@@ -350,7 +350,7 @@ async function PlateResult({
         <dl className="g-recep-stats">
           <div>
             <dt>Odómetro</dt>
-            <dd>{new Intl.NumberFormat('en-US').format(km)}</dd>
+            <dd>{new Intl.NumberFormat('es-CO').format(km)}</dd>
             <dd>km totales</dd>
           </div>
           <div>
@@ -433,7 +433,7 @@ function textoAlerta(item: MaintenanceStatusItem, km: number): string {
   const kmRestantes = dueKilometers !== null ? dueKilometers - km : null;
   const dias = dueDate !== null ? diasHasta(dueDate) : null;
   const miles = (valor: number) =>
-    new Intl.NumberFormat('en-US').format(valor);
+    new Intl.NumberFormat('es-CO').format(valor);
 
   if (item.status === 'overdue') {
     const partes: string[] = [];
