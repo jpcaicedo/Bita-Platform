@@ -37,6 +37,9 @@ describe('RemindersService', () => {
     create: jest.fn(),
     save: jest.fn(),
     existsBy: jest.fn(),
+    find: jest.fn(),
+    count: jest.fn(),
+    update: jest.fn(),
   };
 
   const vehiclesServiceMock = {
@@ -460,5 +463,60 @@ describe('RemindersService', () => {
     expect(created).toBe(0);
     expect(notificationsRepositoryMock.save).not.toHaveBeenCalled();
     expect(remindersRepositoryMock.update).not.toHaveBeenCalled();
+  });
+
+  it('only checks the reminders of one owner when an owner id is given', async () => {
+    remindersRepositoryMock.find.mockResolvedValue([]);
+
+    await service.generateDueNotifications('owner-1');
+
+    const [options] = remindersRepositoryMock.find.mock.calls[0] as [
+      { where: { vehicle?: { ownerId: string } } },
+    ];
+    expect(options.where.vehicle).toEqual({ ownerId: 'owner-1' });
+  });
+
+  it('returns the notifications of the owner, newest first', async () => {
+    remindersRepositoryMock.find.mockResolvedValue([]);
+    notificationsRepositoryMock.find.mockResolvedValue([{ id: 'n-1' }]);
+
+    const result = await service.findNotifications(owner);
+
+    expect(notificationsRepositoryMock.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { reminder: { vehicle: { ownerId: owner.id } } },
+        order: { scheduledFor: 'DESC' },
+      }),
+    );
+    expect(result).toEqual([{ id: 'n-1' }]);
+  });
+
+  it('counts the unread notifications of the owner', async () => {
+    remindersRepositoryMock.find.mockResolvedValue([]);
+    notificationsRepositoryMock.count.mockResolvedValue(3);
+
+    await expect(service.countUnreadNotifications(owner)).resolves.toBe(3);
+  });
+
+  it('marks the unread notifications as read', async () => {
+    notificationsRepositoryMock.find.mockResolvedValue([
+      { id: 'n-1' },
+      { id: 'n-2' },
+    ]);
+
+    const updated = await service.markNotificationsAsRead(owner);
+
+    expect(updated).toBe(2);
+    const [criteria, values] = notificationsRepositoryMock.update.mock
+      .calls[0] as [{ id: unknown }, { readAt: Date }];
+    expect(criteria.id).toBeDefined();
+    expect(values.readAt).toBeInstanceOf(Date);
+  });
+
+  it('does not update anything when every notification is read', async () => {
+    notificationsRepositoryMock.find.mockResolvedValue([]);
+
+    await expect(service.markNotificationsAsRead(owner)).resolves.toBe(0);
+    expect(notificationsRepositoryMock.update).not.toHaveBeenCalled();
   });
 });

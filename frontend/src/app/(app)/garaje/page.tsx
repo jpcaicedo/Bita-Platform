@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { GarageVehicleCard } from '@/components/garaje/vehicle-card';
+import { NotificationBell } from '@/components/layout/notification-bell';
 import { PlusIcon } from '@/components/ui/icons';
 import { getMyVehicles, recordatorioMasUrgente } from '@/lib/garaje';
 import { getVehicleReminders } from '@/lib/reminders';
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 
 interface GarageParams {
   nuevo?: string;
+  eliminado?: string;
 }
 
 export default function GaragePage({
@@ -47,6 +49,9 @@ async function GarageContent({
       <div>
         <h2>Hola, {nombre}</h2>
         <p>Gestiona el estado y mantenimientos de tu garaje al día.</p>
+      </div>
+      <div className="g-garage-bell">
+        <NotificationBell />
       </div>
       <Link
         href="/garaje/nuevo"
@@ -90,6 +95,16 @@ async function GarageContent({
   return (
     <>
       {encabezado}
+
+      {params.eliminado === '1' && (
+        <p
+          className="g-alert g-alert--ok"
+          role="status"
+          style={{ marginBottom: 12 }}
+        >
+          Vehículo eliminado de tu garaje.
+        </p>
+      )}
 
       {params.nuevo === '1' && (
         <p

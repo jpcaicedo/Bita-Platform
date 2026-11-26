@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { AuthenticatedUser } from '../auth/authenticated-user.interface';
 import { MaintenanceTypesService } from '../maintenance-types/maintenance-types.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
@@ -156,9 +156,15 @@ export class RemindersService {
     this.logger.log(`Daily reminder check created ${created} notifications`);
   }
 
-  async generateDueNotifications(): Promise<number> {
+  // Sin ownerId revisa todos los recordatorios (tarea de las 8 a. m.).
+  // Con ownerId solo los de ese dueño: así, al abrir la app, los avisos
+  // nuevos aparecen sin esperar a la tarea del día siguiente.
+  async generateDueNotifications(ownerId?: string): Promise<number> {
     const reminders = await this.remindersRepository.find({
-      where: { status: In<ReminderStatus>(['pending', 'notified']) },
+      where: {
+        status: In<ReminderStatus>(['pending', 'notified']),
+        ...(ownerId ? { vehicle: { ownerId } } : {}),
+      },
       relations: { vehicle: true, createdBy: true },
     });
 
@@ -202,6 +208,47 @@ export class RemindersService {
     }
 
     return created;
+  }
+
+  // Notificaciones del dueño, de la más reciente a la más antigua.
+  async findNotifications(
+    user: AuthenticatedUser,
+  ): Promise<ReminderNotificationEntity[]> {
+    await this.generateDueNotifications(user.id);
+
+    return this.notificationsRepository.find({
+      where: { reminder: { vehicle: { ownerId: user.id } } },
+      relations: { reminder: { vehicle: true } },
+      order: { scheduledFor: 'DESC' },
+      take: 50,
+    });
+  }
+
+  // Cuántas no ha leído: es el número rojo de la campana.
+  async countUnreadNotifications(user: AuthenticatedUser): Promise<number> {
+    await this.generateDueNotifications(user.id);
+
+    return this.notificationsRepository.count({
+      where: { readAt: IsNull(), reminder: { vehicle: { ownerId: user.id } } },
+    });
+  }
+
+  async markNotificationsAsRead(user: AuthenticatedUser): Promise<number> {
+    const unread = await this.notificationsRepository.find({
+      where: { readAt: IsNull(), reminder: { vehicle: { ownerId: user.id } } },
+      select: { id: true },
+    });
+
+    if (unread.length === 0) {
+      return 0;
+    }
+
+    await this.notificationsRepository.update(
+      { id: In(unread.map((notification) => notification.id)) },
+      { readAt: new Date() },
+    );
+
+    return unread.length;
   }
 
   private applyCompletion(

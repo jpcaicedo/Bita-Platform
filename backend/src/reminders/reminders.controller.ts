@@ -45,6 +45,28 @@ export class RemindersController {
     return this.remindersService.findByVehicle(vehicleId, request.user.id);
   }
 
+  @Get('notifications')
+  findNotifications(@Req() request: { user: AuthenticatedUser }) {
+    return this.remindersService.findNotifications(request.user);
+  }
+
+  @Get('notifications/unread-count')
+  async countUnreadNotifications(@Req() request: { user: AuthenticatedUser }) {
+    const count = await this.remindersService.countUnreadNotifications(
+      request.user,
+    );
+    return { count };
+  }
+
+  @Post('notifications/read')
+  @HttpCode(HttpStatus.OK)
+  async markNotificationsAsRead(@Req() request: { user: AuthenticatedUser }) {
+    const updated = await this.remindersService.markNotificationsAsRead(
+      request.user,
+    );
+    return { updated };
+  }
+
   @Post('reminders/:id/complete')
   @HttpCode(HttpStatus.OK)
   complete(

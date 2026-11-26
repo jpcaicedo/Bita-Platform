@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -48,6 +51,15 @@ export class VehiclesController {
     @Req() request: { user: AuthenticatedUser },
   ) {
     return this.vehiclesService.findOwnedOrFail(id, request.user.id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: { user: AuthenticatedUser },
+  ) {
+    return this.vehiclesService.remove(id, request.user.id);
   }
 
   @Get(':id/photo')

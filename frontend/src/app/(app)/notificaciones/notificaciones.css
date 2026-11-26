@@ -1,0 +1,129 @@
+/* Notificaciones de recordatorios (prefijo g-notif-) */
+.g-notif {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.g-notif-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.g-notif-head p {
+  font-size: 14px;
+  color: var(--g-texto-suave);
+}
+
+.g-notif-read-all {
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--g-naranja-oscuro);
+  cursor: pointer;
+}
+
+.g-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.g-notif-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--g-blanco);
+  box-shadow: var(--g-sombra);
+  color: var(--g-texto-suave);
+}
+
+/* Las nuevas resaltan con un borde naranja a la izquierda */
+.g-notif-item--unread {
+  box-shadow:
+    inset 4px 0 0 var(--g-naranja),
+    var(--g-sombra);
+}
+
+.g-notif-dot {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.g-notif-dot--upcoming {
+  background: var(--g-lila);
+  color: var(--g-lila-texto);
+}
+
+.g-notif-dot--overdue {
+  background: var(--g-alerta);
+  color: var(--g-alerta-texto);
+}
+
+.g-notif-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.g-notif-body strong {
+  font-family: var(--g-font-display);
+  font-size: 15px;
+  color: var(--g-azul);
+}
+
+.g-notif-body small {
+  font-size: 11px;
+  color: var(--g-texto-suave);
+  opacity: 0.8;
+}
+
+.g-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 32px 22px;
+  border-radius: var(--g-radio-tarjeta);
+  background: var(--g-blanco);
+  box-shadow: var(--g-sombra);
+  text-align: center;
+}
+
+.g-notif-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--g-beige);
+  color: var(--g-azul);
+}
+
+.g-notif-empty h3 {
+  color: var(--g-azul);
+}
+
+.g-notif-empty p {
+  max-width: 280px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--g-texto-suave);
+}

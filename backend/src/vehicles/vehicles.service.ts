@@ -103,6 +103,13 @@ export class VehiclesService {
     return this.vehiclesRepository.save(vehicle);
   }
 
+  // Borra el vehículo del dueño. La base de datos borra en cascada su
+  // historial, recordatorios (con sus notificaciones) y autorizaciones.
+  async remove(id: string, userId: string): Promise<void> {
+    await this.findOwnedOrFail(id, userId);
+    await this.vehiclesRepository.delete({ id });
+  }
+
   async getPhoto(id: string, userId: string): Promise<string | null> {
     await this.findOwnedOrFail(id, userId);
 
