@@ -145,7 +145,9 @@ describe('AuthService', () => {
     } as UserEntity;
 
     repositoryMock.findOneBy.mockResolvedValue(user);
-    repositoryMock.save.mockImplementation(async (value: UserEntity) => value);
+    repositoryMock.save.mockImplementation((value: UserEntity) =>
+      Promise.resolve(value),
+    );
 
     const result = await service.updateProfile('user-1', {
       username: '  Luis Franco  ',
@@ -176,7 +178,9 @@ describe('AuthService', () => {
 
     repositoryMock.findOneBy.mockResolvedValue(user);
     repositoryMock.findOne.mockResolvedValue(null);
-    repositoryMock.save.mockImplementation(async (value: UserEntity) => value);
+    repositoryMock.save.mockImplementation((value: UserEntity) =>
+      Promise.resolve(value),
+    );
 
     const result = await service.updateProfile('user-1', {
       email: 'Nuevo@Example.com',
@@ -190,11 +194,11 @@ describe('AuthService', () => {
       id: 'user-1',
       email: 'luis@example.com',
       isActive: true,
-    } as UserEntity);
+    });
     repositoryMock.findOne.mockResolvedValue({
       id: 'user-2',
       email: 'otro@example.com',
-    } as UserEntity);
+    });
 
     await expect(
       service.updateProfile('user-1', { email: 'otro@example.com' }),
@@ -222,7 +226,9 @@ describe('AuthService', () => {
     } as UserEntity;
 
     repositoryMock.findOne.mockResolvedValue(user);
-    repositoryMock.save.mockImplementation(async (value: UserEntity) => value);
+    repositoryMock.save.mockImplementation((value: UserEntity) =>
+      Promise.resolve(value),
+    );
 
     const result = await service.changePassword('user-1', {
       currentPassword: 'Secret123',
