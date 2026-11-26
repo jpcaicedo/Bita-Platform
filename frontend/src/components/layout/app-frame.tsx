@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_LINKS, type NavRole } from '@/lib/nav-links';
-import { BackIcon, BellIcon, CarIcon, UserIcon } from '@/components/ui/icons';
+import { BackIcon, CarIcon, UserIcon } from '@/components/ui/icons';
 import { jakarta } from '@/lib/fonts';
 import { NavIcon } from './nav-icon';
 import './app-frame.css';
@@ -14,6 +14,8 @@ import './app-frame.css';
 interface AppFrameProps {
   role: NavRole;
   children: React.ReactNode;
+  // Campana de notificaciones (Server Component que pasa el layout).
+  bell?: React.ReactNode;
 }
 
 interface ScreenMeta {
@@ -88,6 +90,14 @@ function screenMeta(pathname: string): ScreenMeta {
     return { title: 'Talleres Autorizados', back: `/garaje/${vehicleId}` };
   }
 
+  const vehiculo = pathname.match(/^\/garaje\/([^/]+)\/(editar|eliminar)$/);
+  if (vehiculo) {
+    const [, vehicleId, accion] = vehiculo;
+    return accion === 'editar'
+      ? { title: 'Editar Vehículo', back: `/garaje/${vehicleId}` }
+      : { title: 'Eliminar Vehículo', back: `/garaje/${vehicleId}/editar` };
+  }
+
   if (pathname.startsWith('/garaje/historial')) {
     return { title: 'Historial' };
   }
@@ -96,6 +106,9 @@ function screenMeta(pathname: string): ScreenMeta {
   }
   if (pathname.startsWith('/garaje')) return { title: 'Mis Autos' };
   if (pathname.startsWith('/ajustes')) return { title: 'Ajustes' };
+  if (pathname.startsWith('/notificaciones')) {
+    return { title: 'Notificaciones', back: '/garaje' };
+  }
 
   return { title: 'BITA' };
 }
@@ -136,7 +149,7 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppFrame({ role, children }: AppFrameProps) {
+export function AppFrame({ role, bell, children }: AppFrameProps) {
   const pathname = usePathname();
   const meta = screenMeta(pathname);
   const links = NAV_LINKS[role];
@@ -162,15 +175,7 @@ export function AppFrame({ role, children }: AppFrameProps) {
         <h1 className="g-app-heading">{meta.title}</h1>
 
         <div className="g-app-actions">
-          <button
-            type="button"
-            className="g-app-bell"
-            title="Notificaciones próximamente"
-            aria-label="Notificaciones próximamente"
-            disabled
-          >
-            <BellIcon size={20} />
-          </button>
+          {bell}
           <Link href="/ajustes" className="g-app-user" aria-label="Ajustes">
             <UserIcon size={18} />
           </Link>

@@ -37,12 +37,17 @@
 
 /* En el Figma las 4 pantallas del garaje no tienen la barra superior.
    Solo se oculta en ellas: recordatorios y autorizaciones (frente C)
-   sí la usan aunque vivan dentro de /garaje. */
+   sí la usan aunque vivan dentro de /garaje.
+   Next guarda la pantalla anterior escondida (display: none) para volver
+   rápido; por eso solo cuenta el garaje visible, si no la barra también
+   desaparecía al pasar del garaje a Talleres o Ajustes. */
 .g-app-shell:has(
-    .g-garage-greeting,
-    .g-garage-title,
-    .g-garage-detail-head,
-    .g-garage-intro
+    :is(
+      .g-garage-greeting,
+      .g-garage-title,
+      .g-garage-detail-head,
+      .g-garage-intro
+    ):not([style*='display: none'], [style*='display: none'] *)
   )
   .g-app-header {
   display: none;
@@ -688,6 +693,99 @@
   letter-spacing: 0.55px;
   text-transform: uppercase;
   color: var(--g-garage-texto);
+}
+
+/* Placa + botón de editar en la ficha del vehículo */
+.g-garage-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.g-garage-edit {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--g-garage-durazno);
+  color: var(--g-garage-naranja-texto);
+}
+
+/* Campana en el saludo del garaje (aquí no se ve el encabezado general) */
+.g-garage-bell {
+  position: absolute;
+  top: 50px;
+  right: 0;
+}
+
+/* Enlace para eliminar al final de "Editar vehículo" */
+.g-garage-danger-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px auto 0;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g-garage-rojo);
+}
+
+/* Confirmación de "Eliminar vehículo" */
+.g-garage-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 28px 22px;
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: var(--g-garage-sombra);
+  text-align: center;
+}
+
+.g-garage-confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--g-garage-rojo-suave);
+  color: var(--g-garage-rojo);
+}
+
+.g-garage-confirm h2 {
+  font-size: 22px;
+  color: var(--g-garage-azul);
+}
+
+.g-garage-confirm p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--g-garage-gris);
+}
+
+.g-garage-confirm-list {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 16px 14px 34px;
+  border-radius: 18px;
+  background: var(--g-garage-hueso);
+  font-size: 13px;
+  text-align: left;
+  color: var(--g-garage-cafe);
+}
+
+.g-garage-confirm-actions {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .g-garage-hero {

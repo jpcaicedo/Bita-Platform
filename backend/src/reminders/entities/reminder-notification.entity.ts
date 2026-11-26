@@ -50,4 +50,8 @@ export class ReminderNotificationEntity {
 
   @Column({ type: 'text', name: 'error_message', nullable: true })
   errorMessage!: string | null;
+
+  // Cuándo el dueño la vio en la pantalla de notificaciones (null = sin leer).
+  @Column({ type: 'timestamptz', name: 'read_at', nullable: true })
+  readAt!: Date | null;
 }
