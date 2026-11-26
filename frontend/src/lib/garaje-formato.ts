@@ -13,9 +13,9 @@ export function diasHasta(isoDate: string): number {
   return Math.ceil((fecha - Date.now()) / 86_400_000);
 }
 
-// 48250 -> "48,250" (como en el Figma).
+// 48250 -> "48.250" (formato colombiano, igual que los precios).
 export function formatMiles(value: number): string {
-  return new Intl.NumberFormat('en-US').format(value);
+  return new Intl.NumberFormat('es-CO').format(value);
 }
 
 /**
