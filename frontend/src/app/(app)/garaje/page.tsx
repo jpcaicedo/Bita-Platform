@@ -157,7 +157,11 @@ async function GarageContent({
 
 function GarageSkeleton() {
   return (
-    <div aria-busy="true" style={{ paddingTop: 57 }}>
+    <div
+      className="g-garage-loading"
+      aria-busy="true"
+      style={{ paddingTop: 57 }}
+    >
       <div
         className="g-skeleton"
         style={{ height: 36, width: '55%', marginBottom: 8 }}

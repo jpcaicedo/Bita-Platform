@@ -209,3 +209,9 @@
   font-weight: 700;
   line-height: 1;
 }
+
+/* El menú de abajo se queda quieto mientras la pantalla se desliza
+   (ver las transiciones en globals.css). */
+.g-bottom-nav {
+  view-transition-name: g-app-nav;
+}
