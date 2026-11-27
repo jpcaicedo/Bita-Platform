@@ -46,7 +46,8 @@
       .g-garage-greeting,
       .g-garage-title,
       .g-garage-detail-head,
-      .g-garage-intro
+      .g-garage-intro,
+      .g-garage-loading
     ):not([style*='display: none'], [style*='display: none'] *)
   )
   .g-app-header {

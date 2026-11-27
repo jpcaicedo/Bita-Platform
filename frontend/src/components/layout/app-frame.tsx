@@ -9,6 +9,7 @@ import { NAV_LINKS, type NavRole } from '@/lib/nav-links';
 import { BackIcon, CarIcon, UserIcon } from '@/components/ui/icons';
 import { jakarta } from '@/lib/fonts';
 import { NavIcon } from './nav-icon';
+import { PageTransition } from './page-transition';
 import './app-frame.css';
 
 interface AppFrameProps {
@@ -182,7 +183,9 @@ export function AppFrame({ role, bell, children }: AppFrameProps) {
         </div>
       </header>
 
-      <div className="g-app-main">{children}</div>
+      <div className="g-app-main">
+        <PageTransition>{children}</PageTransition>
+      </div>
 
       <nav className="g-bottom-nav" aria-label="Navegación principal">
         {links.map((link, index) => {

@@ -367,3 +367,176 @@ img {
   color: #fff;
   box-shadow: 0 8px 18px rgba(181, 84, 63, 0.25);
 }
+
+/* ------------------------------------------------------------------
+   Transiciones entre pantallas (components/layout/page-transition.tsx)
+   La pantalla que sale se va rápido y la que entra llega más suave.
+   La dirección la pone page-transition.tsx en <html data-nav="…">.
+   ------------------------------------------------------------------ */
+::view-transition-old(.pagina) {
+  animation: 160ms ease-in both g-vt-salir;
+}
+
+::view-transition-new(.pagina) {
+  animation: 300ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both g-vt-entrar;
+}
+
+/* Hacia adelante: la vieja se va a la izquierda, la nueva llega de la derecha */
+html[data-nav='adelante']::view-transition-old(.pagina) {
+  --g-vt-x: -36px;
+}
+html[data-nav='adelante']::view-transition-new(.pagina) {
+  --g-vt-x: 36px;
+}
+
+/* Hacia atrás: al revés */
+html[data-nav='atras']::view-transition-old(.pagina) {
+  --g-vt-x: 36px;
+}
+html[data-nav='atras']::view-transition-new(.pagina) {
+  --g-vt-x: -36px;
+}
+
+/* Cambio de pestaña: sin moverse a los lados, solo sube un poco */
+html[data-nav='cambio']::view-transition-new(.pagina) {
+  --g-vt-y: 8px;
+}
+
+@keyframes g-vt-salir {
+  to {
+    opacity: 0;
+    translate: var(--g-vt-x, 0) 0;
+  }
+}
+
+@keyframes g-vt-entrar {
+  from {
+    opacity: 0;
+    translate: var(--g-vt-x, 0) var(--g-vt-y, 0);
+  }
+}
+
+/* El menú de abajo queda fijo durante la animación */
+::view-transition-group(g-app-nav) {
+  z-index: 100;
+  animation: none;
+}
+
+::view-transition-old(g-app-nav) {
+  display: none;
+}
+
+::view-transition-new(g-app-nav) {
+  animation: none;
+}
+
+/* Los toques durante la animación llegan a la pantalla nueva */
+::view-transition {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Microanimaciones
+   ------------------------------------------------------------------ */
+
+/* Las tarjetas aparecen en cascada al cargar la pantalla */
+.g-garage-card,
+.g-garage-record,
+.g-notif-list > li,
+.g-timeline-card,
+.g-rem-item,
+.g-aut-card {
+  animation: g-aparecer 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+:is(
+  .g-garage-card,
+  .g-garage-record,
+  .g-notif-list > li,
+  .g-timeline-card,
+  .g-rem-item,
+  .g-aut-card
+):nth-child(2) {
+  animation-delay: 60ms;
+}
+
+:is(
+  .g-garage-card,
+  .g-garage-record,
+  .g-notif-list > li,
+  .g-timeline-card,
+  .g-rem-item,
+  .g-aut-card
+):nth-child(3) {
+  animation-delay: 120ms;
+}
+
+:is(
+  .g-garage-card,
+  .g-garage-record,
+  .g-notif-list > li,
+  .g-timeline-card,
+  .g-rem-item,
+  .g-aut-card
+):nth-child(n + 4) {
+  animation-delay: 180ms;
+}
+
+@keyframes g-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Las barras de progreso se llenan al aparecer */
+.g-garage-bar span {
+  animation: g-llenar 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+}
+
+@keyframes g-llenar {
+  from {
+    width: 0;
+  }
+}
+
+/* Botones y enlaces principales responden al toque */
+.g-btn,
+.g-garage-cta,
+.g-garage-submit,
+.g-garage-quick,
+.g-garage-edit,
+.g-nav-item,
+.g-notif-item {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+.g-btn:active,
+.g-garage-cta:active,
+.g-garage-submit:active,
+.g-garage-quick:active,
+.g-garage-edit:active,
+.g-nav-item:active,
+.g-notif-item:active {
+  transform: scale(0.97);
+}
+
+/* Si la persona pidió menos movimiento en su sistema, todo cambia sin
+   animación (accesibilidad). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}

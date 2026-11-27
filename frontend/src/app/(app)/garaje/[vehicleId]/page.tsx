@@ -482,7 +482,11 @@ function progresoRecordatorio(item: ReminderItem): number {
 
 function DetailSkeleton() {
   return (
-    <div aria-busy="true" style={{ paddingTop: 62 }}>
+    <div
+      className="g-garage-loading"
+      aria-busy="true"
+      style={{ paddingTop: 62 }}
+    >
       <div
         className="g-skeleton"
         style={{ height: 30, width: '60%', marginBottom: 24 }}
