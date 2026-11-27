@@ -3,7 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { LockIcon, MailIcon, UserIcon } from '@/components/ui/icons';
+import { LockIcon } from '@/components/ui/icons';
+import { AccountFields } from '@/components/auth/account-fields';
+import type { AccountType } from '@/components/auth/account-fields';
 import { registerAction } from '@/lib/auth-actions';
 import '../auth.css';
 
@@ -20,8 +22,8 @@ interface RegisterParams {
 
 const ERROR_MESSAGES: Record<string, string> = {
   campos: 'Completa todos los campos para crear tu cuenta.',
-  usuario:
-    'El nombre de usuario es obligatorio y debe tener máximo 60 caracteres.',
+  usuario: 'Escribe tu nombre de usuario (máximo 60 caracteres).',
+  nombre_taller: 'Escribe el nombre del taller (máximo 60 caracteres).',
   email: 'Escribe un correo electrónico válido.',
   password_regla:
     'La contraseña debe tener entre 8 y 15 caracteres y solo puede usar letras, números, espacios o guiones.',
@@ -56,7 +58,8 @@ async function RegisterContent({
     : null;
   const email = params.email ?? '';
   const username = params.username ?? '';
-  const tipo = params.tipo ?? '';
+  const tipo: AccountType =
+    params.tipo === 'taller' || params.tipo === 'dueno' ? params.tipo : '';
 
   return (
     <main className="g-auth g-signup">
@@ -90,44 +93,11 @@ async function RegisterContent({
         )}
 
         <form action={registerAction} className="g-auth-form">
-          <div className="g-input-wrap">
-            <label htmlFor="reg-username" className="g-sr-only">
-              Nombre de usuario
-            </label>
-            <span className="g-input-icon">
-              <UserIcon size={20} />
-            </span>
-            <input
-              id="reg-username"
-              className="g-input"
-              type="text"
-              name="username"
-              placeholder="Nombre de usuario"
-              defaultValue={username}
-              maxLength={60}
-              autoComplete="username"
-              required
-            />
-          </div>
-
-          <div className="g-input-wrap">
-            <label htmlFor="reg-email" className="g-sr-only">
-              Correo electrónico
-            </label>
-            <span className="g-input-icon">
-              <MailIcon size={20} />
-            </span>
-            <input
-              id="reg-email"
-              className="g-input"
-              type="email"
-              name="email"
-              placeholder="Correo electrónico"
-              defaultValue={email}
-              autoComplete="email"
-              required
-            />
-          </div>
+          <AccountFields
+            defaultType={tipo}
+            defaultName={username}
+            defaultEmail={email}
+          />
 
           <div className="g-input-wrap">
             <label htmlFor="reg-password" className="g-sr-only">
@@ -173,51 +143,10 @@ async function RegisterContent({
             />
           </div>
 
-          <fieldset className="g-account">
-            <legend className="g-label">Tipo de cuenta:</legend>
-            <div className="g-account-options">
-              <label className="g-account-option">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="taller"
-                  defaultChecked={tipo === 'taller'}
-                  required
-                />
-                <span>Taller</span>
-              </label>
-              <label className="g-account-option">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="dueno"
-                  defaultChecked={tipo === 'dueno'}
-                  required
-                />
-                <span>Dueño</span>
-              </label>
-            </div>
-          </fieldset>
-
           <SubmitButton pendingText="Creando cuenta…">
             Crear Cuenta
           </SubmitButton>
         </form>
-
-        <div className="g-auth-sep">O</div>
-
-        {/* Solo UI: el backend no tiene OAuth de Google. */}
-        <button
-          type="button"
-          className="g-btn g-btn--google"
-          disabled
-          title="Próximamente"
-        >
-          <span className="g-google-g" aria-hidden="true">
-            G
-          </span>
-          Registrarse con Google
-        </button>
 
         <p className="g-auth-foot">
           ¿Ya tienes una cuenta?{' '}

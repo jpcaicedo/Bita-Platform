@@ -144,32 +144,8 @@ async function LoginContent({
             />
           </div>
 
-          {/* Solo UI: el backend no tiene recuperación de contraseña. */}
-          <p className="g-forgot">
-            <span
-              className="g-forgot-link"
-              aria-disabled="true"
-              title="La recuperación de contraseña aún no está disponible"
-            >
-              ¿Olvidaste tu contraseña?
-            </span>
-          </p>
-
           <SubmitButton pendingText="Ingresando…">Continuar</SubmitButton>
         </form>
-
-        {/* Solo UI: el backend no tiene OAuth de Google. */}
-        <button
-          type="button"
-          className="g-btn g-btn--google"
-          disabled
-          title="Próximamente"
-        >
-          <span className="g-google-g" aria-hidden="true">
-            G
-          </span>
-          Iniciar sesión con Google
-        </button>
 
         <p className="g-auth-foot">
           ¿No tienes una cuenta?{' '}

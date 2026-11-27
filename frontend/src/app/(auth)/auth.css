@@ -60,6 +60,10 @@
   flex-direction: column;
 }
 
+.g-auth-form > .g-btn {
+  margin-top: 8px;
+}
+
 .g-input-wrap {
   position: relative;
   margin-bottom: 16px;
@@ -82,52 +86,6 @@
   pointer-events: none;
 }
 
-.g-forgot {
-  margin: 11px 0 33px;
-  line-height: 24px;
-  text-align: center;
-  font-size: 0.78rem;
-  color: var(--g-texto-suave);
-}
-
-.g-forgot-link {
-  color: var(--g-texto-suave);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: not-allowed;
-}
-
-.g-btn--google {
-  width: 100%;
-  margin-top: 20px;
-  border: 1.5px solid var(--g-borde);
-  background: #f8f2e3;
-  color: var(--g-texto);
-  font-family: var(--g-font-body);
-  font-weight: 600;
-}
-
-.g-btn--google:disabled {
-  opacity: 0.72;
-}
-
-.g-google-g {
-  font-family: var(--g-font-display);
-  font-size: 1.2rem;
-  font-weight: 800;
-  background: conic-gradient(
-    from -40deg,
-    #4285f4,
-    #34a853,
-    #fbbc05,
-    #ea4335,
-    #4285f4
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 .g-auth-foot {
   margin-top: 52px;
   line-height: 24px;
@@ -138,24 +96,6 @@
 
 .g-auth-panel .g-alert {
   margin-bottom: 16px;
-}
-
-.g-auth-sep {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 13px 0 0;
-  line-height: 24px;
-  color: var(--g-texto-suave);
-  font-size: 0.75rem;
-}
-
-.g-auth-sep::before,
-.g-auth-sep::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #ddd5c2;
 }
 
 /* Registro (Figma "Sign Up", marco de 393): la ilustración mide 361 × 241
@@ -186,10 +126,6 @@
   margin-bottom: 40px;
 }
 
-.g-signup-panel .g-btn--google {
-  margin-top: 12px;
-}
-
 .g-signup-panel .g-auth-foot {
   margin-top: 25px;
 }
@@ -206,8 +142,15 @@
   text-overflow: ellipsis;
 }
 
+/* Aviso que solo aparece cuando la cuenta es de taller. */
+.g-account-hint {
+  margin: -6px 0 16px 18px;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
 .g-account {
-  margin: 5px 0 40px;
+  margin: 0 0 20px;
   padding: 0;
   border: 0;
 }

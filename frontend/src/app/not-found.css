@@ -1,0 +1,52 @@
+.g-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 48px 28px;
+  text-align: center;
+  background: var(--g-crema);
+}
+
+.g-404-logo {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 22px;
+}
+
+.g-404-logo img {
+  object-fit: contain;
+}
+
+.g-404-code {
+  margin: 0;
+  font-family: var(--g-font-display);
+  font-size: clamp(4.5rem, 24vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: #f0d9a8;
+}
+
+.g-404-title {
+  margin: 14px 0 0;
+  font-size: clamp(1.5rem, 6.6vw, 1.9rem);
+  font-weight: 800;
+  color: var(--g-azul);
+}
+
+.g-404-text {
+  max-width: 300px;
+  margin: 12px auto 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-wrap: balance;
+  color: var(--g-texto-suave);
+}
+
+.g-404-cta {
+  width: min(100%, 320px);
+  margin-top: 30px;
+}

@@ -82,12 +82,18 @@ export async function registerAction(formData: FormData) {
   const accountType = String(formData.get('accountType') ?? '');
   const keep = { email, username, tipo: accountType };
 
-  if (!username || !email || !password || !confirmPassword || !accountType) {
+  if (!email || !password || !confirmPassword || !accountType) {
     backToRegister('campos', keep);
   }
 
-  if (username.length > 60) {
-    backToRegister('usuario', keep);
+  if (accountType !== 'taller' && accountType !== 'dueno') {
+    backToRegister('tipo', keep);
+  }
+
+  // El campo "username" guarda el nombre del taller cuando la cuenta es de
+  // taller; para los dueños es su nombre de usuario.
+  if (!username || username.length > 60) {
+    backToRegister(accountType === 'taller' ? 'nombre_taller' : 'usuario', keep);
   }
 
   if (!isValidEmail(email)) {
@@ -100,10 +106,6 @@ export async function registerAction(formData: FormData) {
 
   if (password !== confirmPassword) {
     backToRegister('confirm', keep);
-  }
-
-  if (accountType !== 'taller' && accountType !== 'dueno') {
-    backToRegister('tipo', keep);
   }
 
   const registered = await bitaFetch<RegisterResponse>('/auth/register', {
